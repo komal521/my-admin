@@ -62,9 +62,9 @@ const Dashboard = ({ darkMode }) => {
   };
 
   const formatCurrency = (value) =>
-    new Intl.NumberFormat("en-US", {
+    new Intl.NumberFormat("en-IN", {
       style: "currency",
-      currency: "USD",
+      currency: "INR",
       notation: Number(value || 0) >= 1000 ? "compact" : "standard",
       maximumFractionDigits: 2,
     }).format(Number(value || 0));
@@ -100,7 +100,7 @@ const Dashboard = ({ darkMode }) => {
       image: a1,
       name: "Classic Silk Blazer",
       category: "Apparel",
-      price: "$1,200",
+      price: "₹1,200",
       stock: "24 Units",
       status: "Active",
       dot: "bg-green-500",
@@ -109,7 +109,7 @@ const Dashboard = ({ darkMode }) => {
       image: a2,
       name: "Gold Embossed Watch",
       category: "Accessories",
-      price: "$3,450",
+      price: "₹3,450",
       stock: "8 Units",
       status: "Low Stock",
       dot: "bg-yellow-500",
@@ -118,7 +118,7 @@ const Dashboard = ({ darkMode }) => {
       image: a3,
       name: "Luxury Leather Tote",
       category: "Bags",
-      price: "$890",
+      price: "₹890",
       stock: "45 Units",
       status: "Active",
       dot: "bg-green-500",
@@ -127,7 +127,7 @@ const Dashboard = ({ darkMode }) => {
       image: a4,
       name: "Velvet Night Gown",
       category: "Evening Wear",
-      price: "$2,100",
+      price: "₹2,100",
       stock: "0 Units",
       status: "Out Of Stock",
       dot: "bg-red-500",
@@ -136,7 +136,7 @@ const Dashboard = ({ darkMode }) => {
       image: a5,
       name: "Diamond Stud Earrings",
       category: "Jewelry",
-      price: "$5,800",
+      price: "₹5,800",
       stock: "12 Units",
       status: "Active",
       dot: "bg-green-500",

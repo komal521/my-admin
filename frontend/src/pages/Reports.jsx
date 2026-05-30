@@ -428,7 +428,7 @@ const Reports = ({ darkMode }) => {
           {
             id: "#REP-2041",
             client: "Nexus Corp",
-            revenue: "$12,400.00",
+            revenue: "₹12,400.00",
             status: "Paid",
             color: "bg-gray-200 text-gray-700",
             date: "Oct 12, 2023",
@@ -436,7 +436,7 @@ const Reports = ({ darkMode }) => {
           {
             id: "#REP-2042",
             client: "Altos Design",
-            revenue: "$8,250.00",
+            revenue: "₹8,250.00",
             status: "Pending",
             color: "bg-yellow-100 text-yellow-700",
             date: "Oct 14, 2023",
@@ -444,7 +444,7 @@ const Reports = ({ darkMode }) => {
           {
             id: "#REP-2043",
             client: "Quantom AI",
-            revenue: "$15,100.00",
+            revenue: "₹15,100.00",
             status: "Paid",
             color: "bg-gray-200 text-gray-700",
             date: "Oct 15, 2023",
@@ -452,7 +452,7 @@ const Reports = ({ darkMode }) => {
           {
             id: "#REP-2044",
             client: "GreenLeaf Co",
-            revenue: "$6,800.00",
+            revenue: "₹6,800.00",
             status: "Paid",
             color: "bg-gray-200 text-gray-700",
             date: "Oct 17, 2023",
@@ -460,7 +460,7 @@ const Reports = ({ darkMode }) => {
           {
             id: "#REP-2045",
             client: "Starlight Dev",
-            revenue: "$11,200.00",
+            revenue: "₹11,200.00",
             status: "Overdue",
             color: "bg-red-100 text-red-600",
             date: "Oct 20, 2023",

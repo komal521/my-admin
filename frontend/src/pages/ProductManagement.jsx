@@ -68,7 +68,7 @@ const ProductManagement = ({ darkMode }) => {
       sku: "AQ-W-20-G",
       category: "Accessories",
       brand: "Aura Premium",
-      price: "$299.00",
+      price: "₹299.00",
       stock: 124,
       status: "Active",
       statusColor: "bg-green-100 text-green-700",
@@ -79,7 +79,7 @@ const ProductManagement = ({ darkMode }) => {
       sku: "SH-50-BK",
       category: "Electronics",
       brand: "AudioTech",
-      price: "$159.50",
+      price: "₹159.50",
       stock: 45,
       status: "Active",
       statusColor: "bg-green-100 text-green-700",
@@ -90,7 +90,7 @@ const ProductManagement = ({ darkMode }) => {
       sku: "CS-V2-RE",
       category: "Footwear",
       brand: "SprintMax",
-      price: "$89.00",
+      price: "₹89.00",
       stock: 0,
       status: "Out of Stock",
       statusColor: "bg-red-100 text-red-600",
@@ -101,7 +101,7 @@ const ProductManagement = ({ darkMode }) => {
       sku: "PR-SH-77",
       category: "Accessories",
       brand: "Luna Eye",
-      price: "$120.00",
+      price: "₹120.00",
       stock: 12,
       status: "Active",
       statusColor: "bg-green-100 text-green-700",
@@ -112,7 +112,7 @@ const ProductManagement = ({ darkMode }) => {
       sku: "MK-01-CL",
       category: "Home & Kitchen",
       brand: "PureBrew",
-      price: "$45.99",
+      price: "₹45.99",
       stock: 8,
       status: "Draft",
       statusColor: "bg-gray-200 text-gray-600",
@@ -133,7 +133,7 @@ const ProductManagement = ({ darkMode }) => {
         sku: product.sku,
         category: product.category,
         brand: product.brand,
-        price: `$${Number(product.base_price || 0).toFixed(2)}`,
+        price: `₹${Number(product.base_price || 0).toFixed(2)}`,
         stock: product.stock_quantity,
         status: product.is_active ? "Active" : "Draft",
         statusColor: product.is_active
@@ -479,17 +479,17 @@ const ProductManagement = ({ darkMode }) => {
             {[
               {
                 name: "Velvet Sofa Cover",
-                price: "$24.00",
+                price: "₹24.00",
                 time: "2 min ago",
               },
               {
                 name: "Titanium Wallet",
-                price: "$85.00",
+                price: "₹85.00",
                 time: "45 mins ago",
               },
               {
                 name: "Bamboo Desk Lamp",
-                price: "$62.00",
+                price: "₹62.00",
                 time: "7 hours ago",
               },
             ].map((item, index) => (
@@ -549,21 +549,21 @@ const ProductManagement = ({ darkMode }) => {
               {
                 name: "Leather Satchel",
                 sold: "1204 Units Sold",
-                price: "$45,750",
+                price: "₹45,750",
                 rank: "#1",
               },
 
               {
                 name: "Silk Sleep Mask",
                 sold: "840 Units Sold",
-                price: "$12,400",
+                price: "₹12,400",
                 rank: "#2",
               },
 
               {
                 name: "Copper Pan Set",
                 sold: "745 Units Sold",
-                price: "$89,400",
+                price: "₹89,400",
                 rank: "#3",
               },
             ].map((item, index) => (

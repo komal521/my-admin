@@ -219,7 +219,7 @@ const Settings = ({ darkMode }) => {
               <span className="text-xl font-bold">+</span>
             </div>
             <h2 className="text-3xl font-bold">
-              $49<span className="text-base font-medium">/mo</span>
+              ₹3,999<span className="text-base font-medium">/mo</span>
             </h2>
             <p className="mt-2 text-xs text-white/90">
               Your subscription will automatically renew on June 15, 2026.

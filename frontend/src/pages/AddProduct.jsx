@@ -265,8 +265,8 @@ const AddProduct = ({ darkMode, onBack }) => {
             <div className="pt-2">
               <SectionHeader icon={cateIcon} title="Pricing & Inventory" />
               <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
-                <TextInput label="Base Price ($) *" name="basePrice" icon={linkIcon} placeholder="0.00" />
-                <TextInput label="Discount Price ($)" name="discountPrice" icon={linkIcon} placeholder="0.00" />
+                <TextInput label="Base Price (₹) *" name="basePrice" icon={linkIcon} placeholder="0.00" />
+                <TextInput label="Discount Price (₹)" name="discountPrice" icon={linkIcon} placeholder="0.00" />
                 <TextInput label="Stock Quantity" name="stockQuantity" icon={cateIcon} placeholder="0" />
               </div>
 
@@ -359,8 +359,8 @@ const AddProduct = ({ darkMode, onBack }) => {
                   </thead>
                   <tbody>
                     {[
-                      ["Classic Gold - Large", "CG-L", "+0.00", "25 units"],
-                      ["Royal Platinum - Small", "RP-S", "+450.00", "10 units"],
+                      ["Classic Gold - Large", "CG-L", "+₹0.00", "25 units"],
+                      ["Royal Platinum - Small", "RP-S", "+₹450.00", "10 units"],
                     ].map((row) => (
                       <tr key={row[0]} className="border-b border-gray-100">
                         {row.map((cell) => (

@@ -10,6 +10,7 @@ import messageIcon from "../assets/message.png";
 import dateIcon from "../assets/date.png";
 import faqIcon from "../assets/faq.png";
 import menu1Icon from "../assets/menu1.png";
+import rightUp from "../assets/right-up.png";
 import a1 from "../assets/a1.jpeg";
 import a4 from "../assets/a4.jpeg";
 import b1 from "../assets/b1.jpeg";
@@ -141,7 +142,7 @@ const Support = ({ darkMode }) => {
                 {card.value}
               </h2>
               <div className="flex items-center gap-1 text-[11px] font-semibold text-white">
-                <span>↗</span>
+                <img src={rightUp} alt="" className="w-3.5 h-3.5 object-contain" />
                 <span>{card.growth} from yesterday</span>
               </div>
             </div>

@@ -21,6 +21,7 @@ import c5 from "../assets/c5.jpg";
 import moreIcon from "../assets/more.png";
 import leftArrowIcon from "../assets/left-arrow.png";
 import rightArrowIcon from "../assets/right-arrow.png";
+import rightUp from "../assets/right-up.png";
 import axios from "axios";
 import { useEffect, useState } from "react";
 const OrderManagement = ({ darkMode }) => {
@@ -60,7 +61,7 @@ const OrderManagement = ({ darkMode }) => {
       date: "Oct 24, 2023",
       payment: "Mastercard",
       status: "Delivered",
-      amount: "$249.00",
+      amount: "₹249.00",
       statusColor:
         "bg-[#eaf8ef] text-[#1f9d57] border border-[#d1f0dc]",
     },
@@ -72,7 +73,7 @@ const OrderManagement = ({ darkMode }) => {
       date: "Oct 24, 2023",
       payment: "PayPal",
       status: "Pending",
-      amount: "$129.99",
+      amount: "₹129.99",
       statusColor:
         "bg-[#fff6df] text-[#d9a100] border border-[#f8e7b3]",
     },
@@ -84,7 +85,7 @@ const OrderManagement = ({ darkMode }) => {
       date: "Oct 23, 2023",
       payment: "Visa",
       status: "Processing",
-      amount: "$399.00",
+      amount: "₹399.00",
       statusColor:
         "bg-[#eef2ff] text-[#4f6df5] border border-[#d9e2ff]",
     },
@@ -96,7 +97,7 @@ const OrderManagement = ({ darkMode }) => {
       date: "Oct 23, 2023",
       payment: "Apple Pay",
       status: "Cancelled",
-      amount: "$159.00",
+      amount: "₹159.00",
       statusColor:
         "bg-[#ffe8e8] text-[#ef4444] border border-[#ffd0d0]",
     },
@@ -108,7 +109,7 @@ const OrderManagement = ({ darkMode }) => {
       date: "Oct 22, 2023",
       payment: "Visa",
       status: "Delivered",
-      amount: "$549.50",
+      amount: "₹549.50",
       statusColor:
         "bg-[#eaf8ef] text-[#1f9d57] border border-[#d1f0dc]",
     },
@@ -291,13 +292,23 @@ const OrderManagement = ({ darkMode }) => {
                     <h2 className="text-[38px] font-bold text-white mt-3 leading-none">
                       {item.value}
                     </h2>
-                    <p
-                      className={`text-xs mt-4 font-medium ${item.growth.includes("↑")
-                          ? "text-[#d8ffd7]"
-                          : "text-[#ffe0e0]"
+                    <div className="flex items-center gap-1 mt-4">
+                      <img
+                        src={rightUp}
+                        alt=""
+                        className={`w-3.5 h-3.5 object-contain ${
+                          item.growth.includes("↓") ? "rotate-90" : ""
+                        }`}
+                      />
+                      <p
+                        className={`text-xs font-medium ${
+                          item.growth.includes("↓")
+                            ? "text-[#ffe0e0]"
+                            : "text-[#d8ffd7]"
                         }`} >
-                      {item.growth}
-                    </p>
+                        {item.growth.replace("↑", "").replace("↓", "").trim()}
+                      </p>
+                    </div>
                   </div>
                   <div className="w-14 h-14 rounded-2xl bg-white/90 flex items-center justify-center shadow-lg">
                     <img
