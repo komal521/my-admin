@@ -217,52 +217,23 @@ const Profile = ({ darkMode }) => {
                 Review All
               </button>
             </div>
-            <div
-  className="px-5 py-4
-  flex flex-col sm:flex-row
-  sm:items-center sm:justify-between
-  gap-3
-  bg-gradient-to-r
-  from-[#fffdf8] to-[#fff7dd]">
+            <div className="px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between
+  gap-3 bg-gradient-to-r from-[#fffdf8] to-[#fff7dd]">
   <div className="flex items-center gap-3">
-
-    <div
-      className="w-8 h-8 rounded-full
-      bg-[#fff2b8]
-      flex items-center justify-center"
-    >
-
-      <img
-        src={verifiedIcon}
-        alt=""
-        className="w-4 h-4"
-      />
-
+    <div className="w-8 h-8 rounded-full bg-[#fff2b8] flex items-center justify-center">
+      <img src={verifiedIcon} alt="" className="w-4 h-4"/>
     </div>
-
-    <h3
-      className="text-[#e3b129]
-      text-sm sm:text-base
-      font-bold tracking-wide"
-    >
+    <h3  className="text-[#e3b129]  text-sm sm:text-base  font-bold tracking-wide" >
       ACCOUNT SECURITY SCORE: 98% (EXCELLENT)
     </h3>
-
   </div>
-  <button
-    className="text-[#8b3dff]
-    font-semibold text-sm
-    hover:underline"
-  >
+  <button className="text-[#8b3dff] font-semibold text-sm hover:underline">
     Improve Score
   </button>
-
 </div>
-
           </div>
         </div>
         <div className="bg-[#fff1c9] rounded-[28px] p-6 h-fit">
-
           <div className="flex items-center gap-3 mb-6">
             <img src={clockIcon} alt="" className="w-5 h-5" />
 

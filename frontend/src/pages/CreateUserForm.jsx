@@ -11,7 +11,6 @@ import switchIcon from "../assets/switch.png";
 import locationIcon from "../assets/location.png";
 import cameraIcon from "../assets/camra.png";
 import downIcon from "../assets/down.png";
-
 const CreateUserForm = ({ setShowForm, onUserCreated }) => {
   const [formData, setFormData] = useState({
     fullName: "",
@@ -24,14 +23,12 @@ const CreateUserForm = ({ setShowForm, onUserCreated }) => {
     confirmPassword: "",
     address: "",
   });
-
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
-
   const handleSubmit = async () => {
     if (
       !formData.fullName ||
@@ -62,13 +59,10 @@ const CreateUserForm = ({ setShowForm, onUserCreated }) => {
         password: formData.password,
         address: formData.address,
       });
-
       alert(res.data.message);
-
       console.log(res.data);
       onUserCreated?.();
       setShowForm(false);
-
       setFormData({
         fullName: "",
         email: "",
@@ -82,11 +76,9 @@ const CreateUserForm = ({ setShowForm, onUserCreated }) => {
       });
     } catch (error) {
       console.log(error);
-
       const message =
         error?.response?.data?.message ||
-        "Backend server nahi chal raha. Pehle backend terminal me npm.cmd start run karo.";
-
+        "Backend ";
       alert(message);
     }
   };
@@ -114,190 +106,108 @@ const CreateUserForm = ({ setShowForm, onUserCreated }) => {
               />
 
               <div className="absolute bottom-0 right-0 bg-[#d9a63d] p-2 rounded-full shadow-md">
-                <img
-                  src={cameraIcon}
-                  alt=""
-                  className="w-4 h-4"
-                />
+                <img src={cameraIcon} alt="" className="w-4 h-4" />
               </div>
             </div>
-
             <h2 className="mt-4 text-[#333] font-semibold text-lg">
               User Portrait
             </h2>
-
             <p className="text-gray-400 text-sm text-center">
               JPG, PNG or GIF • MAX 5MB
             </p>
           </div>
-
           <div className="mb-10">
             <div className="flex items-center gap-2 mb-5">
-              <img
-                src={groupIcon}
-                alt=""
-                className="w-5 h-5"
-              />
-
+              <img src={groupIcon} alt="" className="w-5 h-5" />
               <h2 className="font-bold text-[#5c4033] text-lg">
                 Identity Details
               </h2>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
                 <label className="text-sm text-gray-600 block mb-2">
                   Full Name
                 </label>
-
                 <div className="border border-[#e5e5e5] rounded-xl px-4 py-3 flex items-center">
-                  <img
-                    src={userIcon}
-                    alt=""
-                    className="w-5 h-5 mr-3"
-                  />
-
-                  <input
-                    type="text"
-                    name="fullName"
-                    value={formData.fullName}
-                    onChange={handleChange}
-                    placeholder="Alexander Hamilton"
-                    className="w-full outline-none bg-transparent text-sm"
-                  />
+                  <img  src={userIcon}  alt=""  className="w-5 h-5 mr-3"/>
+                  <input type="text" name="fullName" value={formData.fullName} onChange={handleChange}
+                    placeholder="Alexander Hamilton" className="w-full outline-none bg-transparent text-sm" />
                 </div>
               </div>
-
               <div>
                 <label className="text-sm text-gray-600 block mb-2">
                   Email Address
                 </label>
-
                 <div className="border border-[#e5e5e5] rounded-xl px-4 py-3 flex items-center">
-                  <img
-                    src={gmailIcon}
-                    alt=""
-                    className="w-5 h-5 mr-3"
-                  />
-
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
+                  <img  src={gmailIcon}  alt=""  className="w-5 h-5 mr-3" />
+                  <input type="email" name="email" value={formData.email} onChange={handleChange}
                     placeholder="alex@aurelia.com"
-                    className="w-full outline-none bg-transparent text-sm"
-                  />
+                    className="w-full outline-none bg-transparent text-sm" />
                 </div>
               </div>
-
               <div>
                 <label className="text-sm text-gray-600 block mb-2">
                   Phone Number
                 </label>
-
                 <div className="border border-[#e5e5e5] rounded-xl px-4 py-3 flex items-center">
-                  <img
-                    src={telephoneIcon}
-                    alt=""
-                    className="w-5 h-5 mr-3"
-                  />
-
-                  <input
-                    type="text"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    placeholder="+91 99999 00000"
-                    className="w-full outline-none bg-transparent text-sm"
-                  />
+                  <img src={telephoneIcon} alt="" className="w-5 h-5 mr-3"/>
+                  <input type="text" name="phone" value={formData.phone} onChange={handleChange}
+                    placeholder="+91 99999 00000"  className="w-full outline-none bg-transparent text-sm" />
                 </div>
               </div>
-
               <div>
                 <label className="text-sm text-gray-600 block mb-2">
                   Department
                 </label>
-
                 <div className="border border-[#e5e5e5] rounded-xl px-4 py-3 flex items-center justify-between">
                   <div className="flex items-center w-full">
-                    <img
-                      src={departmentIcon}
-                      alt=""
-                      className="w-5 h-5 mr-3"
-                    />
-
-                    <select
-                      name="department"
-                      value={formData.department}
+                    <img src={departmentIcon} alt="" className="w-5 h-5 mr-3" />
+                    <select  name="department"  value={formData.department}
                       onChange={handleChange}
-                      className="w-full outline-none bg-transparent text-gray-500 appearance-none text-sm"
-                    >
+                      className="w-full outline-none bg-transparent text-gray-500 appearance-none text-sm"  >
                       <option value="">Select Department</option>
                       <option>HR</option>
                       <option>Sales</option>
                       <option>Management</option>
                     </select>
                   </div>
-
-                  <img
-                    src={downIcon}
-                    alt=""
-                    className="w-4 h-4 ml-2"
-                  />
+                  <img  src={downIcon}  alt=""  className="w-4 h-4 ml-2" />
                 </div>
               </div>
             </div>
           </div>
-
           <div className="mb-10">
             <div className="flex items-center gap-2 mb-5">
               <img
                 src={verifiedIcon}
                 alt=""
-                className="w-5 h-5"
-              />
-
+                className="w-5 h-5" />
               <h2 className="font-bold text-[#5c4033] text-lg">
                 Access & Governance
               </h2>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
                 <label className="text-sm text-gray-600 block mb-2">
                   System Role
                 </label>
-
                 <div className="border border-[#e5e5e5] rounded-xl px-4 py-3 flex items-center justify-between">
                   <div className="flex items-center w-full">
-                    <img
-                      src={verifiedIcon}
-                      alt=""
-                      className="w-5 h-5 mr-3"
-                    />
-
+                    <img  src={verifiedIcon}  alt=""  className="w-5 h-5 mr-3" />
                     <select
                       name="role"
                       value={formData.role}
                       onChange={handleChange}
-                      className="w-full outline-none bg-transparent text-gray-500 appearance-none text-sm"
-                    >
+                      className="w-full outline-none bg-transparent text-gray-500 appearance-none text-sm" >
                       <option value="">Select Role</option>
                       <option>Admin</option>
                       <option>Manager</option>
                       <option>Staff</option>
                     </select>
                   </div>
-
-                  <img
-                    src={downIcon}
-                    alt=""
-                    className="w-4 h-4 ml-2"
-                  />
+                  <img src={downIcon} alt="" className="w-4 h-4 ml-2" />
                 </div>
               </div>
-
               <div>
                 <label className="text-sm text-gray-600 block mb-2">
                   Account Status
@@ -305,59 +215,31 @@ const CreateUserForm = ({ setShowForm, onUserCreated }) => {
 
                 <div className="border border-[#e5e5e5] rounded-xl px-4 py-3 flex items-center justify-between">
                   <div className="flex items-center w-full">
-                    <img
-                      src={switchIcon}
-                      alt=""
-                      className="w-5 h-5 mr-3"
-                    />
-
-                    <select
-                      name="status"
-                      value={formData.status}
-                      onChange={handleChange}
-                      className="w-full outline-none bg-transparent text-gray-500 appearance-none text-sm"
-                    >
+                    <img  src={switchIcon}  alt=""  className="w-5 h-5 mr-3"/>
+                    <select name="status" value={formData.status}   onChange={handleChange}
+                      className="w-full outline-none bg-transparent text-gray-500 appearance-none text-sm" >
                       <option>Active</option>
                       <option>Pending</option>
                     </select>
                   </div>
-
-                  <img
-                    src={downIcon}
-                    alt=""
-                    className="w-4 h-4 ml-2"
-                  />
+                  <img src={downIcon} alt="" className="w-4 h-4 ml-2" />
                 </div>
               </div>
-
               <div>
                 <label className="text-sm text-gray-600 block mb-2">
                   Password
                 </label>
-
                 <div className="border border-[#e5e5e5] rounded-xl px-4 py-3 flex items-center">
-                  <img
-                    src={verifiedIcon}
-                    alt=""
-                    className="w-5 h-5 mr-3"
-                  />
-
-                  <input
-                    type="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    placeholder="********"
-                    className="w-full outline-none bg-transparent text-sm"
-                  />
+                  <img src={verifiedIcon} alt="" className="w-5 h-5 mr-3"/>
+                  <input  type="password"  name="password"  value={formData.password}
+                    onChange={handleChange}  placeholder="********"
+                    className="w-full outline-none bg-transparent text-sm" />
                 </div>
               </div>
-
               <div>
                 <label className="text-sm text-gray-600 block mb-2">
                   Confirm Password
                 </label>
-
                 <div className="border border-[#e5e5e5] rounded-xl px-4 py-3 flex items-center">
                   <img
                     src={verifiedIcon}

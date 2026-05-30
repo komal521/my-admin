@@ -120,8 +120,7 @@ const Support = ({ darkMode }) => {
             className="rounded-2xl p-6 relative overflow-hidden shadow-sm transition-transform hover:-translate-y-1"
             style={{
               background: "linear-gradient(to bottom, #f5ece1 0%, #b87333 100%)",
-            }}
-          >
+            }}  >
             <div className="flex justify-between items-start mb-8">
               <div className="w-11 h-11 bg-[#1a1a1a] rounded-xl flex items-center justify-center shadow-md">
                 <img

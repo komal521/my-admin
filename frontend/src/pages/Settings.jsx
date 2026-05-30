@@ -23,8 +23,7 @@ const ToggleSwitch = ({ checked, onChange }) => (
     aria-pressed={checked}
     className={`relative h-5 w-9 rounded-full p-0.5 transition-colors ${
       checked ? "bg-[#d9a63d]" : "bg-gray-300"
-    }`}
-  >
+    }`}>
     <span
       className={`block h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${
         checked ? "translate-x-4" : "translate-x-0"

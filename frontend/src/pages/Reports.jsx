@@ -83,8 +83,7 @@ const Reports = ({ darkMode }) => {
   return (
     <div
       className={`p-3 sm:p-4 md:p-6 lg:p-8 min-h-screen transition-all duration-300
-      ${darkMode ? "bg-[#0f0f0f]" : "bg-[#f5f7fb]"}`}
-    >
+      ${darkMode ? "bg-[#0f0f0f]" : "bg-[#f5f7fb]"}`}>
       {/* TOP CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         {stats.map((item, index) => (
@@ -106,23 +105,17 @@ const Reports = ({ darkMode }) => {
                   className="w-5 h-5 object-contain"
                 />
               </div>
-
-              {/* PERCENT */}
               <div
                 className="flex items-center gap-1 text-xs font-semibold
-                bg-black text-white px-3 py-1 rounded-full shadow-md"
-              >
+                bg-black text-white px-3 py-1 rounded-full shadow-md">
                 <img
                   src={rightUp1}
                   alt=""
-                  className="w-3.5 h-3.5 object-contain"
-                />
+                  className="w-3.5 h-3.5 object-contain" />
                 <span>{item.percent}</span>
               </div>
             </div>
-
             <p className="text-sm text-white/80">{item.title}</p>
-
             <h2 className="text-3xl font-bold mt-1">{item.value}</h2>
           </div>
         ))}
@@ -142,20 +135,14 @@ const Reports = ({ darkMode }) => {
             <div>
               <h2
                 className={`text-xl font-semibold
-                ${darkMode ? "text-white" : "text-[#222]"}`}
-              >
+                ${darkMode ? "text-white" : "text-[#222]"}`} >
                 Revenue Performance
               </h2>
-
-              <p
-                className={`text-sm mt-1
-                ${darkMode ? "text-gray-400" : "text-gray-500"}`}
-              >
+              <p className={`text-sm mt-1
+                ${darkMode ? "text-gray-400" : "text-gray-500"}`} >
                 Monthly growth and order volume analysis
               </p>
             </div>
-
-            {/* BUTTONS */}
             <div className="flex items-center gap-3 flex-wrap">
               <button
                 className={`h-11 px-4 rounded-xl border flex items-center gap-2 text-sm transition-all duration-300 hover:scale-105
@@ -163,42 +150,27 @@ const Reports = ({ darkMode }) => {
                   darkMode
                     ? "bg-[#111] border-[#2a2a2a] text-white hover:bg-[#1a1a1a]"
                     : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
-                }`}
-              >
-                <img
-                  src={filterIcon}
-                  alt=""
-                  className="w-4 h-4 object-contain"
-                />
+                }`} >
+                <img  src={filterIcon}  alt=""  className="w-4 h-4 object-contain"/>
                 Filters
               </button>
-
               <button
                 className={`h-11 px-4 rounded-xl border flex items-center gap-2 text-sm transition-all duration-300 hover:scale-105
                 ${
                   darkMode
                     ? "bg-[#111] border-[#2a2a2a] text-white hover:bg-[#1a1a1a]"
                     : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
-                }`}
-              >
-                <img
-                  src={downloadIcon}
-                  alt=""
-                  className="w-4 h-4 object-contain"
-                />
+                }`}>
+                <img src={downloadIcon} alt="" className="w-4 h-4 object-contain"/>
                 Export
               </button>
             </div>
           </div>
-
-          {/* GRAPH */}
           <div className="mt-8 overflow-x-auto">
             <div className="min-w-[700px] h-[320px] relative pl-12 pb-8">
-              {/* Y AXIS */}
               <div
                 className={`absolute left-0 top-0 h-full flex flex-col justify-between text-xs
-                ${darkMode ? "text-gray-500" : "text-gray-400"}`}
-              >
+                ${darkMode ? "text-gray-500" : "text-gray-400"}`} >
                 <span>₹10000</span>
                 <span>₹7500</span>
                 <span>₹5000</span>
@@ -206,7 +178,6 @@ const Reports = ({ darkMode }) => {
                 <span>₹0</span>
               </div>
 
-              {/* GRID */}
               <div className="absolute inset-0 left-12 flex flex-col justify-between">
                 {[...Array(5)].map((_, i) => (
                   <div
@@ -216,26 +187,21 @@ const Reports = ({ darkMode }) => {
                   />
                 ))}
               </div>
-
-              {/* SVG GRAPH */}
               <svg
                 viewBox="0 0 700 320"
                 className="absolute inset-0 left-12 w-[calc(100%-48px)] h-full"
-                preserveAspectRatio="none"
-              >
+                preserveAspectRatio="none" >
                 <defs>
                   <linearGradient
                     id="paint0_linear"
                     x1="0"
                     y1="0"
                     x2="0"
-                    y2="1"
-                  >
+                    y2="1"  >
                     <stop offset="0%" stopColor="#d9a63d" stopOpacity="0.25" />
                     <stop offset="100%" stopColor="#d9a63d" stopOpacity="0" />
                   </linearGradient>
                 </defs>
-
                 <path
                   d="M20 230 
                   C70 240, 90 250, 130 190
@@ -246,8 +212,7 @@ const Reports = ({ darkMode }) => {
                   fill="none"
                   stroke="#d9a63d"
                   strokeWidth="4"
-                  strokeLinecap="round"
-                />
+                  strokeLinecap="round" />
 
                 <path
                   d="M20 230 
@@ -257,15 +222,13 @@ const Reports = ({ darkMode }) => {
                   C470 140, 500 50, 570 70
                   C620 80, 650 90, 690 70
                   L690 320 L20 320 Z"
-                  fill="url(#paint0_linear)"
-                />
+                  fill="url(#paint0_linear)"  />
               </svg>
 
               {/* MONTHS */}
               <div
                 className={`absolute bottom-0 left-12 right-0 flex justify-between text-sm
-                ${darkMode ? "text-gray-500" : "text-gray-400"}`}
-              >
+                ${darkMode ? "text-gray-500" : "text-gray-400"}`}>
                 <span>Jan</span>
                 <span>Feb</span>
                 <span>Mar</span>
@@ -279,75 +242,56 @@ const Reports = ({ darkMode }) => {
             </div>
           </div>
         </div>
-
-        {/* RIGHT SIDE */}
         <div
           className={`rounded-3xl p-5 md:p-6 shadow-sm border transition-all duration-300 hover:shadow-xl
           ${
             darkMode
               ? "bg-[#161616] border-[#232323]"
               : "bg-[#edf6fa] border-[#dfeef5]"
-          }`}
-        >
+          }`}>
           <h2
             className={`text-xl font-semibold
-            ${darkMode ? "text-white" : "text-[#222]"}`}
-          >
+            ${darkMode ? "text-white" : "text-[#222]"}`} >
             Revenue Mix
           </h2>
-
           <p
             className={`text-sm mt-1
-            ${darkMode ? "text-gray-400" : "text-gray-500"}`}
-          >
+            ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
             Income share by service type
           </p>
-
-          {/* DONUT CHART */}
           <div className="flex justify-center mt-10">
             <div className="relative w-[220px] h-[220px] rounded-full bg-[conic-gradient(#e4a93d_0deg,#e4a93d_150deg,#c15b17_150deg,#c15b17_250deg,#000_250deg,#000_330deg,#e4a93d_330deg)] flex items-center justify-center shadow-lg">
               <div
                 className={`w-[120px] h-[120px] rounded-full
-                ${darkMode ? "bg-[#161616]" : "bg-[#edf6fa]"}`}
-              />
+                ${darkMode ? "bg-[#161616]" : "bg-[#edf6fa]"}`} />
             </div>
           </div>
-
-          {/* FOOTER */}
           <div className="mt-10 flex items-center justify-between">
             <p
               className={`text-sm
-              ${darkMode ? "text-gray-300" : "text-gray-600"}`}
-            >
+              ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
               Total Share
             </p>
-
             <span className="text-[#d9a63d] font-semibold">100%</span>
           </div>
         </div>
       </div>
-      {/* BOTTOM SECTION */}
 <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.6fr] gap-5 mt-6">
-  {/* WEEKLY ENGAGEMENT */}
   <div
     className={`rounded-3xl p-5 md:p-6 shadow-sm border transition-all duration-300 hover:shadow-xl
     ${
       darkMode
         ? "bg-[#161616] border-[#232323]"
         : "bg-white border-[#ececec]"
-    }`}
-  >
+    }`} >
     <h2
       className={`text-lg font-semibold
-      ${darkMode ? "text-white" : "text-[#222]"}`}
-    >
+      ${darkMode ? "text-white" : "text-[#222]"}`} >
       Weekly Engagement
     </h2>
-
     <p
       className={`text-sm mt-1
-      ${darkMode ? "text-gray-400" : "text-gray-500"}`}
-    >
+      ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
       New user registrations over 4 weeks
     </p>
     <div className="mt-8 flex items-end justify-between gap-4 h-[220px] px-2">
@@ -359,16 +303,13 @@ const Reports = ({ darkMode }) => {
       ].map((item, index) => (
         <div
           key={index}
-          className="flex flex-col items-center justify-end gap-3 flex-1"
-        >
+          className="flex flex-col items-center justify-end gap-3 flex-1" >
           <div
-            className={`${item.height} w-full max-w-[42px] rounded-xl bg-gradient-to-t from-[#c07c2b] to-[#e4b04d] shadow-md transition-all duration-300 hover:scale-105`}
-          />
+            className={`${item.height} w-full max-w-[42px] rounded-xl bg-gradient-to-t from-[#c07c2b] to-[#e4b04d] shadow-md transition-all duration-300 hover:scale-105`} />
 
           <span
             className={`text-xs whitespace-nowrap
-            ${darkMode ? "text-gray-400" : "text-gray-500"}`}
-          >
+            ${darkMode ? "text-gray-400" : "text-gray-500"}`} >
             {item.week}
           </span>
         </div>
@@ -381,32 +322,24 @@ const Reports = ({ darkMode }) => {
       darkMode
         ? "bg-[#161616] border-[#232323]"
         : "bg-white border-[#ececec]"
-    }`}
-  >
-
+    }`} >
     <div className="flex items-start justify-between gap-4 flex-wrap">
       <div>
         <h2
           className={`text-lg font-semibold
-          ${darkMode ? "text-white" : "text-[#222]"}`}
-        >
+          ${darkMode ? "text-white" : "text-[#222]"}`} >
           Recent Reports
         </h2>
-
         <p
           className={`text-sm mt-1
-          ${darkMode ? "text-gray-400" : "text-gray-500"}`}
-        >
+          ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
           Operational ledger for the current period
         </p>
       </div>
-
       <button className="text-[#d9a63d] text-sm font-medium hover:underline">
         View All
       </button>
     </div>
-
-    {/* TABLE */}
     <div className="mt-6 overflow-x-auto">
       <div className="min-w-[700px]">
         {/* HEAD */}
@@ -416,8 +349,7 @@ const Reports = ({ darkMode }) => {
             darkMode
               ? "border-[#2a2a2a] text-gray-400"
               : "border-[#ececec] text-gray-500"
-          }`}
-        >
+          }`} >
           <span>ID</span>
           <span>Client Name</span>
           <span>Revenue</span>
@@ -475,7 +407,6 @@ const Reports = ({ darkMode }) => {
                 : "border-[#f1f1f1] text-gray-700"
             }`}  >
             <span className="text-[#d9a63d] font-medium">{item.id}</span>
-
             <span>{item.client}</span>
             <span className="font-medium">{item.revenue}</span>
             <div>
