@@ -207,7 +207,47 @@ const Settings = ({ darkMode }) => {
               </button>
             </div>
           </section>
+<section className={`rounded-xl p-5 shadow-sm ${cardClass}`}>
+            <div className="mb-5 flex items-center justify-between">
+              <h2 className="text-base font-semibold">Active Devices</h2>
+              <span className="rounded-full bg-gray-100 px-3 py-1 text-[10px] font-semibold text-gray-700">
+                3 Active
+              </span>
+            </div>
 
+            {[
+              { icon: laptopIcon, title: 'MacBook Pro 16"', info: "SAN FRANCISCO, USA - CHROME", current: true },
+              { icon: phoneCallIcon, title: "iPhone 15 Pro", info: "SAN FRANCISCO, USA - APP" },
+              { icon: laptopIcon, title: 'iMac 24"', info: "LONDON, UK - SAFARI" },
+            ].map((device) => (
+              <div key={device.title} className={`mb-3 flex items-center justify-between gap-3 rounded-xl p-3 ${fieldClass}`}>
+                <div className="flex min-w-0 items-center gap-3">
+                  <IconBox icon={device.icon} darkMode={darkMode} />
+                  <div className="min-w-0">
+                    <h3 className="truncate text-xs font-bold">{device.title}</h3>
+                    <p className={`text-[10px] ${mutedText}`}>{device.info}</p>
+                  </div>
+                </div>
+                {device.current && (
+                  <span className="rounded-full bg-green-100 px-2 py-1 text-[10px] font-semibold text-green-700">
+                    Current
+                  </span>
+                )}
+              </div>
+            ))}
+
+            <div className="pt-2">
+              <button className={`flex h-9 w-full items-center justify-between rounded-lg px-3 text-xs font-semibold text-[#d9a63d] ${
+                darkMode ? "bg-[#111827]" : "bg-[#fff7df]"
+              }`}>
+                View Full History
+                <img src={downIcon} alt="" className="h-3 w-3 opacity-80" />
+              </button>
+              <button className="mt-4 block w-full text-center text-xs font-semibold text-red-500">
+                Sign Out All Other Devices
+              </button>
+            </div>
+          </section>
           
         </div>
 

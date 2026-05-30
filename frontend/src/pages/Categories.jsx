@@ -193,8 +193,7 @@ if (showAddPage) {
           {cards.map((card) => (
             <div
               key={card.title}
-              className="relative overflow-hidden rounded-2xl bg-[#b57d00] p-5 shadow-md transition-all duration-300 hover:scale-[1.02]"
-            >
+            className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#c29a73] via-[#a97b52] to-[#7a5337] p-5 shadow-md transition-all duration-300 hover:scale-[1.02]">
               <div className="absolute right-4 top-4 rounded-full bg-white px-2 py-[2px] text-[11px] font-semibold text-gray-700">
                 {card.percent}
               </div>
