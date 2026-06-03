@@ -16,7 +16,9 @@ const Users = () => {
     try {
       setLoading(true);
       setError("");
-      const response = await fetch("/api/users");
+   const response = await fetch(
+  "http://localhost:5000/api/users"
+);
 
       if (!response.ok) {
         throw new Error("Users API failed");
@@ -156,14 +158,14 @@ const Users = () => {
                   <th className="text-left p-5 text-[#5c4033] font-semibold">
                     Email Address
                   </th>
-                  <th className="text-left p-5 text-[#5c4033] font-semibold">
-                    Department
-                  </th>
-                  <th className="text-left p-5 text-[#5c4033] font-semibold">
-                    Role
-                  </th>
-                  <th className="text-left p-5 text-[#5c4033] font-semibold">
-                    Status </th>
+                 <th className="text-left p-5 text-[#5c4033] font-semibold">
+               Phone Number</th>
+          <th className="text-left p-5 text-[#5c4033] font-semibold">
+            Gender
+           </th>
+         <th className="text-left p-5 text-[#5c4033] font-semibold">
+           Date of Birth
+             </th>
                   <th className="text-left p-5 text-[#5c4033] font-semibold">
                     Actions
                   </th>
@@ -207,22 +209,13 @@ const Users = () => {
                       </div>
                     </td>
                     <td className="p-5 text-gray-600">{user.email}</td>
-                    <td className="p-5 text-gray-600"> {user.department}</td>
-                    <td className="p-5">
-                      <span className="bg-[#f4ebe4] text-[#6d4c41] px-4 py-1.5 rounded-full text-sm font-semibold">
-                        {user.role}  </span> </td>
-                    <td className="p-5">
-                      <span className={`px-4 py-1.5 rounded-full text-sm font-semibold
-                        ${
-                          user.status === "Active"
-                            ? "bg-green-100 text-green-700"
-                            : user.status === "Pending"
-                            ? "bg-yellow-100 text-yellow-700"
-                            : "bg-red-100 text-red-700"
-                        } `} >
-                        {user.status}
-                      </span>
-                    </td>
+                   <td className="p-5 text-gray-600">
+                   {user.phone}</td>
+            <td className="p-5 text-gray-600">
+               {user.gender}
+                       </td>
+        <td className="p-5 text-gray-600">
+           {user.dob}</td>
                     <td className="p-5">
                       <div className="flex items-center gap-3">
                         <button className="w-11 h-11 rounded-2xl bg-[#f4ebe4] hover:scale-105 transition-all duration-300 flex items-center justify-center shadow-sm">
