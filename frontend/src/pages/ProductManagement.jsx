@@ -19,11 +19,12 @@ import AddProduct from "./AddProduct";
 const ProductManagement = ({ darkMode }) => {
   const [activePage, setActivePage] = useState(1);
   const [showAddProduct, setShowAddProduct] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
   const [dbProducts, setDbProducts] = useState([]);
   const [cards, setCards] = useState([]);
   const loadCards = async () => {
     try {
-      const response = await fetch("/api/product/cards");
+      const response = await fetch("http://localhost:5000/api/product/cards");
 
       if (!response.ok) {
         throw new Error("Cards API failed");
@@ -120,7 +121,7 @@ const ProductManagement = ({ darkMode }) => {
   ];
   const loadProducts = async () => {
     try {
-      const response = await fetch("/api/products");
+      const response = await fetch("http://localhost:5000/api/products");
 
       if (!response.ok) {
         throw new Error("Products API failed");
@@ -128,7 +129,8 @@ const ProductManagement = ({ darkMode }) => {
 
       const data = await response.json();
       const mappedProducts = (data.products || []).map((product) => ({
-        image: g1,
+        raw: product,
+        image: product.image ? `http://localhost:5000/uploads/${product.image}` : g1,
         name: product.product_name,
         sku: product.sku,
         category: product.category,
@@ -153,12 +155,15 @@ const ProductManagement = ({ darkMode }) => {
   }, []);
 
   const visibleProducts = dbProducts.length > 0 ? dbProducts : products;
-  if (showAddProduct) {
+  if (showAddProduct || editingProduct) {
     return (
       <AddProduct
+        key={editingProduct ? editingProduct.id : "new"}
         darkMode={darkMode}
+        product={editingProduct}
         onBack={() => {
           setShowAddProduct(false);
+          setEditingProduct(null);
           loadProducts();
         }}
       />
@@ -340,7 +345,7 @@ const ProductManagement = ({ darkMode }) => {
                           <button className="hover:scale-110 transition-all">
                             <img src={showIcon} alt="" className="w-4 h-4 opacity-70" />
                           </button>
-                          <button className="hover:scale-110 transition-all">
+                          <button className="hover:scale-110 transition-all" onClick={() => { if (product.raw) setEditingProduct(product.raw); else alert('Static products cannot be edited'); }}>
                             <img src={pencilIcon} alt="" className="w-4 h-4 opacity-70" />
                           </button>
                           <button className="hover:scale-110 transition-all">

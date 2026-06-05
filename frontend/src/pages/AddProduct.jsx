@@ -32,6 +32,7 @@ const TextInput = ({
   fieldClass = defaultFieldClass,
   labelClass = defaultLabelClass,
   className = "",
+  defaultValue,
 }) => (
   <div className={className}>
     <label className={`mb-2 block text-sm font-semibold ${labelClass}`}>
@@ -39,7 +40,7 @@ const TextInput = ({
     </label>
     <div className="relative">
       <InputIcon icon={icon} />
-      <input  type={type}  name={name}  placeholder={placeholder}
+      <input type={type} name={name} placeholder={placeholder} defaultValue={defaultValue}
         className={`h-12 w-full rounded-2xl border pl-12 pr-4 text-sm outline-none ${fieldClass}`}/>
     </div>
   </div>
@@ -52,6 +53,7 @@ const SelectInput = ({
   options = ["Luxury", "Premium", "Classic"],
   fieldClass = defaultFieldClass,
   labelClass = defaultLabelClass,
+  defaultValue,
 }) => (
   <div>
     <label className={`mb-2 block text-sm font-semibold ${labelClass}`}>
@@ -61,6 +63,7 @@ const SelectInput = ({
       <InputIcon icon={icon} />
       <select
         name={name}
+        defaultValue={defaultValue}
         className={`h-12 w-full appearance-none rounded-2xl border pl-12 pr-11 text-sm outline-none ${fieldClass}`} >
         <option value="">{placeholder}</option>
         {options.map((option) => (
@@ -87,8 +90,9 @@ const SectionHeader = ({ icon, title, desc, darkMode = false }) => (
     </div>
   </div>
 );
-const AddProduct = ({ darkMode, onBack }) => {
-  const [isActive, setIsActive] = useState(true);
+const AddProduct = ({ darkMode, onBack, product }) => {
+  const [isActive, setIsActive] = useState(product ? Boolean(product.is_active) : true);
+  const [image, setImage] = useState(null);
   const fieldClass = darkMode
     ? "bg-[#1a2234] border-[#2b3548] text-white placeholder:text-gray-500"
     : "bg-white border-[#e7e2da] text-gray-700 placeholder:text-gray-400";
@@ -98,50 +102,18 @@ const AddProduct = ({ darkMode, onBack }) => {
   const labelClass = darkMode ? "text-gray-200" : "text-[#23417d]";
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const form = Object.fromEntries(new FormData(event.currentTarget));
-    const payload = {
-      productName: form.productName,
-      description: form.description,
-      sku: form.sku,
-      brand: form.brand,
-      category: form.category,
-      subCategory: form.subCategory,
-      basePrice: form.basePrice,
-      discountPrice: form.discountPrice,
-      stockQuantity: form.stockQuantity,
-      isActive,
-      isFeatured: Boolean(form.isFeatured),
-      weight: form.weight,
-      length: form.length,
-      width: form.width,
-      height: form.height,
-      baseColor: form.baseColor,
-      tags: ["Luxury", "Limited Edition", "New Arrival"],
-      variants: [
-        {
-          optionName: "Classic Gold - Large",
-          skuSuffix: "CG-L",
-          additionalPrice: 0,
-          stock: 25,
-        },
-        {
-          optionName: "Royal Platinum - Small",
-          skuSuffix: "RP-S",
-          additionalPrice: 450,
-          stock: 10,
-        },
-      ],
-      metaTitle: form.metaTitle,
-      metaDescription: form.metaDescription,
-      images: ["a3.jpeg", "a2.jpeg"],
-    };
+    const form = new FormData(event.currentTarget);
+    form.append("isActive", isActive);
+    if (image) {
+      form.append("image", image);
+    }
+
     try {
-      const response = await fetch("/api/products/create-product", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
+      const url = product ? `http://localhost:5000/api/products/${product.id}` : "http://localhost:5000/api/products";
+      const method = product ? "PUT" : "POST";
+      const response = await fetch(url, {
+        method: method,
+        body: form,
       });
       const data = await response.json();
       if (!response.ok) {
@@ -166,7 +138,7 @@ const AddProduct = ({ darkMode, onBack }) => {
             <div>
               <h1 className={`text-2xl font-bold leading-tight md:text-3xl ${
                   darkMode ? "text-white" : "text-[#111]" }`} >
-                Insert New Product
+                {product ? "Edit Product" : "Insert New Product"}
               </h1>
               <p className={`mt-1 text-sm ${
                   darkMode ? "text-gray-400" : "text-gray-500"
@@ -185,21 +157,22 @@ const AddProduct = ({ darkMode, onBack }) => {
             desc="Fill all required product details" />
           <form onSubmit={handleSubmit} className="space-y-6">
             <TextInput label="Product Name *" name="productName" icon={linkIcon}
-              placeholder="e.g. Midnight Sapphire Chronograph" />
+              placeholder="e.g. Midnight Sapphire Chronograph" defaultValue={product?.product_name} />
             <div>
               <label className={`mb-2 block text-sm font-semibold ${labelClass}`}>
                 Product Description </label>
               <textarea  name="description"  rows={5}
                 placeholder="Craft a compelling narrative for this item..."
-                className={`w-full resize-none rounded-2xl border p-4 text-sm outline-none ${fieldClass}`}  />
+                className={`w-full resize-none rounded-2xl border p-4 text-sm outline-none ${fieldClass}`} defaultValue={product?.description}  />
             </div>
             <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-              <TextInput  label="SKU / Product ID"  name="sku" icon={boxIcon}  placeholder="AUR-2024-MS-001" />
+              <TextInput  label="SKU / Product ID"  name="sku" icon={boxIcon}  placeholder="AUR-2024-MS-001" defaultValue={product?.sku} />
               <TextInput
                 label="Brand Name"
                 name="brand"
                 icon={cateIcon}
                 placeholder="e.g. Aurelian Luxe"
+                defaultValue={product?.brand}
               />
             </div>
 
@@ -210,6 +183,7 @@ const AddProduct = ({ darkMode, onBack }) => {
                 icon={cateIcon}
                 placeholder="Select Category"
                 options={["Electronics", "Accessories", "Fashion", "Home"]}
+                defaultValue={product?.category}
               />
               <SelectInput
                 label="Sub-Category"
@@ -217,6 +191,7 @@ const AddProduct = ({ darkMode, onBack }) => {
                 icon={cateIcon}
                 placeholder="Select Sub-Category"
                 options={["Luxury", "Premium", "Classic", "New Arrival"]}
+                defaultValue={product?.sub_category}
               />
             </div>
 
@@ -232,7 +207,7 @@ const AddProduct = ({ darkMode, onBack }) => {
                     : "border-gray-200 bg-[#fcfcfc] hover:border-[#d4af37]"
                 }`}
               >
-                <input type="file" multiple accept="image/*" className="hidden" />
+                <input type="file" accept="image/*" onChange={(e) => setImage(e.target.files[0])} className="hidden" />
                 <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#fff7db]">
                   <img src={camraIcon} alt="" className="h-7 w-7" />
                 </div>
@@ -265,9 +240,9 @@ const AddProduct = ({ darkMode, onBack }) => {
             <div className="pt-2">
               <SectionHeader icon={cateIcon} title="Pricing & Inventory" />
               <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
-                <TextInput label="Base Price (₹) *" name="basePrice" icon={linkIcon} placeholder="0.00" />
-                <TextInput label="Discount Price (₹)" name="discountPrice" icon={linkIcon} placeholder="0.00" />
-                <TextInput label="Stock Quantity" name="stockQuantity" icon={cateIcon} placeholder="0" />
+                <TextInput label="Base Price (₹) *" name="basePrice" icon={linkIcon} placeholder="0.00" defaultValue={product?.base_price} />
+                <TextInput label="Discount Price (₹)" name="discountPrice" icon={linkIcon} placeholder="0.00" defaultValue={product?.discount_price} />
+                <TextInput label="Stock Quantity" name="stockQuantity" icon={cateIcon} placeholder="0" defaultValue={product?.stock_quantity} />
               </div>
 
               <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center">
@@ -294,7 +269,7 @@ const AddProduct = ({ darkMode, onBack }) => {
                   Product is Active
                 </button>
                 <label className="flex items-center gap-3 text-sm text-gray-600">
-                  <input type="checkbox" name="isFeatured" className="h-4 w-4" />
+                  <input type="checkbox" name="isFeatured" className="h-4 w-4" defaultChecked={product ? Boolean(product.is_featured) : false} />
                   Mark as Featured Product
                 </label>
               </div>
@@ -303,10 +278,10 @@ const AddProduct = ({ darkMode, onBack }) => {
             <div className="pt-2">
               <SectionHeader icon={carIcon} title="Shipping & Specifications" />
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
-                <TextInput label="Weight (kg)" name="weight" icon={carIcon} placeholder="0.0" />
-                <TextInput label="Length (cm)" name="length" icon={scanningIcon} placeholder="0.0" />
-                <TextInput label="Width (cm)" name="width" icon={scanningIcon} placeholder="0.0" />
-                <TextInput label="Height (cm)" name="height" icon={scanningIcon} placeholder="0.0" />
+                <TextInput label="Weight (kg)" name="weight" icon={carIcon} placeholder="0.0" defaultValue={product?.weight} />
+                <TextInput label="Length (cm)" name="length" icon={scanningIcon} placeholder="0.0" defaultValue={product?.length} />
+                <TextInput label="Width (cm)" name="width" icon={scanningIcon} placeholder="0.0" defaultValue={product?.width} />
+                <TextInput label="Height (cm)" name="height" icon={scanningIcon} placeholder="0.0" defaultValue={product?.height} />
               </div>
 
               <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
@@ -316,6 +291,7 @@ const AddProduct = ({ darkMode, onBack }) => {
                   icon={artIcon}
                   placeholder="Select primary aesthetic color"
                   options={["Gold", "Platinum", "Black", "Silver"]}
+                  defaultValue={product?.base_color}
                 />
                 <div>
                   <label className={`mb-2 block text-sm font-semibold ${labelClass}`}>
@@ -386,6 +362,7 @@ const AddProduct = ({ darkMode, onBack }) => {
                 name="metaTitle"
                 icon={globalIcon}
                 placeholder="e.g. Midnight Sapphire - Handcrafted Luxury Chronograph | Aurelian Luxe"
+                defaultValue={product?.meta_title}
               />
               <div className="mt-5">
                 <label className={`mb-2 block text-sm font-semibold ${labelClass}`}>
@@ -396,6 +373,7 @@ const AddProduct = ({ darkMode, onBack }) => {
                   rows={4}
                   placeholder="Discover the elegance of the Midnight Sapphire. Handcrafted with authentic sapphire crystals..."
                   className={`w-full resize-none rounded-2xl border p-4 text-sm outline-none ${fieldClass}`}
+                  defaultValue={product?.meta_description}
                 />
               </div>
               <div className={`mt-5 flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm ${fieldClass}`}>
@@ -416,7 +394,7 @@ const AddProduct = ({ darkMode, onBack }) => {
               </button>
               <button type="submit" className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#d9a63d] px-8 py-3 font-semibold text-white transition-all hover:bg-[#c3922f] sm:w-auto">
                 <img src={checkIcon} alt="" className="h-4 w-4" />
-                Save Product & Publish
+                {product ? "Update Product" : "Save Product & Publish"}
               </button>
             </div>
           </form>
