@@ -1,7 +1,6 @@
 const express = require("express");
 const multer = require("multer");
 const pool = require("../db");
-
 const router = express.Router();
 
 const ensureCategoriesTable = async () => {
