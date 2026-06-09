@@ -36,6 +36,7 @@ const ensureProductsTable = async () => {
 router.get("/", async (req, res) => {
   try {
     await ensureProductsTable();
+
     const [products] = await pool.execute(`
       SELECT *
       FROM products
@@ -48,6 +49,7 @@ router.get("/", async (req, res) => {
     });
   } catch (error) {
     console.log(error);
+
     res.status(500).json({
       success: false,
       message: "Products load nahi ho paaye",
@@ -56,6 +58,7 @@ router.get("/", async (req, res) => {
   }
 });
 
+/* CREATE PRODUCT */
 router.post("/create-product", async (req, res) => {
   try {
     await ensureProductsTable();
@@ -87,17 +90,35 @@ router.post("/create-product", async (req, res) => {
     if (!productName || !sku || !brand || !category || !basePrice) {
       return res.status(400).json({
         success: false,
-        message: "Product name, SKU, brand, category aur base price required hai",
+        message:
+          "Product name, SKU, brand, category aur base price required hai",
       });
     }
 
     const [result] = await pool.execute(
       `
       INSERT INTO products (
-        product_name, description, sku, brand, category, sub_category,
-        base_price, discount_price, stock_quantity, is_active, is_featured,
-        weight, length, width, height, base_color, tags, variants,
-        meta_title, meta_description, images
+        product_name,
+        description,
+        sku,
+        brand,
+        category,
+        sub_category,
+        base_price,
+        discount_price,
+        stock_quantity,
+        is_active,
+        is_featured,
+        weight,
+        length,
+        width,
+        height,
+        base_color,
+        tags,
+        variants,
+        meta_title,
+        meta_description,
+        images
       )
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
@@ -143,7 +164,39 @@ router.post("/create-product", async (req, res) => {
 
     res.status(500).json({
       success: false,
-      message: "Product create nahi hua. Backend/database check karo.",
+      message: "Product create nahi hua",
+      error: error.message,
+    });
+  }
+});
+
+/* DELETE PRODUCT */
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const [result] = await pool.execute(
+      "DELETE FROM products WHERE id = ?",
+      [id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Product deleted successfully",
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Delete failed",
       error: error.message,
     });
   }

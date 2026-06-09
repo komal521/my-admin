@@ -169,7 +169,32 @@ const ProductManagement = ({ darkMode }) => {
       />
     );
   }
+const handleDelete = async (id) => {
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this product?"
+  );
 
+  if (!confirmDelete) return;
+
+  try {
+    const response = await fetch(
+      `http://localhost:5000/api/products/${id}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Delete failed");
+    }
+
+    loadProducts();
+    loadCards();
+  } catch (error) {
+    console.error(error);
+    alert("Failed to delete product");
+  }
+};
   return (
     <div
       className={`min-h-screen p-4 sm:p-5 md:p-7 ${darkMode ? "bg-[#0f172a]" : "bg-[#f4f7fb]"}`}>
@@ -348,9 +373,12 @@ const ProductManagement = ({ darkMode }) => {
                           <button className="hover:scale-110 transition-all" onClick={() => { if (product.raw) setEditingProduct(product.raw); else alert('Static products cannot be edited'); }}>
                             <img src={pencilIcon} alt="" className="w-4 h-4 opacity-70" />
                           </button>
-                          <button className="hover:scale-110 transition-all">
-                            <img src={binIcon} alt="" className="w-4 h-4 opacity-70" />
-                          </button>
+                          <button className="hover:scale-110 transition-all" onClick={() => {
+                           if (product.raw) {
+                      handleDelete(product.raw.id); } else {
+                   alert("Static products cannot be deleted");} }}>
+  <img src={binIcon} alt="" className="w-4 h-4 opacity-70" />
+                      </button>
                         </div>
                       </td>
                     </tr>

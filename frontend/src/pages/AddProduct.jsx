@@ -354,42 +354,11 @@ const AddProduct = ({ darkMode, onBack, product }) => {
                 Add New Variation
               </button>
             </div>
-
-            <div className="pt-2">
-              <SectionHeader icon={globalIcon} title="Search Engine Optimization" />
-              <TextInput
-                label="Meta Title"
-                name="metaTitle"
-                icon={globalIcon}
-                placeholder="e.g. Midnight Sapphire - Handcrafted Luxury Chronograph | Aurelian Luxe"
-                defaultValue={product?.meta_title}
-              />
-              <div className="mt-5">
-                <label className={`mb-2 block text-sm font-semibold ${labelClass}`}>
-                  Meta Description
-                </label>
-                <textarea
-                  name="metaDescription"
-                  rows={4}
-                  placeholder="Discover the elegance of the Midnight Sapphire. Handcrafted with authentic sapphire crystals..."
-                  className={`w-full resize-none rounded-2xl border p-4 text-sm outline-none ${fieldClass}`}
-                  defaultValue={product?.meta_description}
-                />
-              </div>
-              <div className={`mt-5 flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm ${fieldClass}`}>
-                <img src={informationIcon} alt="" className="h-5 w-5" />
-                <span>
-                  Optimizing your meta tags can increase your product visibility in search results by up to 40%.
-                </span>
-              </div>
-            </div>
-
             <div className="flex flex-col items-center justify-end gap-4 border-t border-gray-200 pt-6 sm:flex-row">
               <button
                 type="button"
                 onClick={onBack}
-                className="w-full rounded-2xl border border-[#1f4ed8] bg-[#eef4ff] px-8 py-3 font-semibold text-[#1f4ed8] transition-all hover:bg-[#d9a63d] hover:text-white sm:w-auto"
-              >
+                className="w-full rounded-2xl border border-[#1f4ed8] bg-[#eef4ff] px-8 py-3 font-semibold text-[#1f4ed8] transition-all hover:bg-[#d9a63d] hover:text-white sm:w-auto" >
                 Cancel & Discard
               </button>
               <button type="submit" className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#d9a63d] px-8 py-3 font-semibold text-white transition-all hover:bg-[#c3922f] sm:w-auto">
