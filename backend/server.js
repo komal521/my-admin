@@ -1,15 +1,18 @@
 const express = require("express");
 const cors = require("cors");
 const db = require("./db");
-
+const path = require("path");
 const productRoutes = require("./routes/productRoutes");
+const categoryRoutes = require ("./routes/categoryRoutes");
 
 const app = express();
 const PORT = 5000;
 
 app.use(cors());
 app.use(express.json());
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/products", productRoutes);
+app.use("/api/categories",categoryRoutes);
 app.get("/", (req, res) => {
   res.send("Admin Backend Running");
 });

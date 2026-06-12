@@ -20,7 +20,7 @@ import c1 from "../assets/c1.jpg";
 import c2 from "../assets/c2.jpg";
 import c3 from "../assets/c3.jpg";
 import AddCategory from "./AddCategory";
-
+import deleteIcon from "../assets/bin (1).png";
 const Categories = ({ darkMode }) => {
   const [activeButton, setActiveButton] = useState("add");
 
@@ -100,9 +100,8 @@ const fetchCategories = async () => {
       setCategoryError(data.message || "Categories load nahi ho paayi.");
       return;
     }
-
-    setCategories(Array.isArray(data) ? data : []);
-    setCategoryError(Array.isArray(data) ? "" : "Categories ka data format galat aa raha hai.");
+setCategories(data.categories || data || []);
+setCategoryError("");
   } catch (error) {
     console.log(error);
     setCategories([]);
@@ -112,6 +111,34 @@ const fetchCategories = async () => {
 if (showAddPage) {
   return <AddCategory darkMode={darkMode} />;
 }
+const deleteCategory = async (id) => {
+  try {
+    const confirmDelete = window.confirm(
+      "Delete this category?"
+    );
+
+    if (!confirmDelete) return;
+
+    const res = await fetch(
+      `http://localhost:5000/api/categories/${id}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    const data = await res.json();
+
+    if (data.success) {
+      setCategories((prev) =>
+  prev.filter((item) => item.id !== id)
+);
+
+      fetchCardsData();
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
   return (
     <div className="p-3 sm:p-4 md:p-6 lg:p-8">
       <div
@@ -274,12 +301,28 @@ if (showAddPage) {
                   >
                     {item.status}
                   </span>
-                  <p className="text-sm text-gray-400">
-                    {item.created_at ? new Date(item.created_at).toLocaleDateString() : "-"}
-                  </p>
-                  <button className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-gray-100">
-                    <img src={dotsIcon} alt="" className="h-4 w-4" />
-                  </button>
+                  <div className="flex items-center gap-2">
+  <button
+    onClick={() =>
+      deleteCategory(item.id)
+    }
+    className="h-8 w-8 flex items-center justify-center rounded-full hover:bg-red-100"
+  >
+    <img
+      src={deleteIcon}
+      alt=""
+      className="w-4 h-4"
+    />
+  </button>
+
+  <button className="h-8 w-8 flex items-center justify-center rounded-full hover:bg-gray-100">
+    <img
+      src={dotsIcon}
+      alt=""
+      className="w-4 h-4"
+    />
+  </button>
+</div>
                 </div>
               ))}
             </div>
