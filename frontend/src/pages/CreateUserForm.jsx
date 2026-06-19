@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import profileImg from "../assets/a1.jpeg";
 import groupIcon from "../assets/group.png";
@@ -11,7 +11,7 @@ import switchIcon from "../assets/switch.png";
 import locationIcon from "../assets/location.png";
 import cameraIcon from "../assets/camra.png";
 import downIcon from "../assets/down.png";
-const CreateUserForm = ({ setShowForm, onUserCreated }) => {
+const CreateUserForm = ({ setShowForm, onUserCreated, editUser }) => {
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -23,6 +23,21 @@ const CreateUserForm = ({ setShowForm, onUserCreated }) => {
     confirmPassword: "",
     address: "",
   });
+  useEffect(() => {
+    if (editUser) {
+      setFormData({
+        fullName: editUser.fullName || "",
+        email: editUser.email || "",
+        phone: editUser.phone || "",
+        department: editUser.department || "",
+        role: editUser.role || "",
+        status: editUser.status || "Active",
+        password: "",
+        confirmPassword: "",
+        address: editUser.address || "",
+      });
+    }
+  }, [editUser]);
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -42,23 +57,26 @@ const CreateUserForm = ({ setShowForm, onUserCreated }) => {
       alert("Please fill all fields");
       return;
     }
-
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords do not match");
       return;
     }
-
     try {
-      const res = await axios.post("/api/users/create-user", {
-        fullName: formData.fullName,
-        email: formData.email,
-        phone: formData.phone,
-        department: formData.department,
-        role: formData.role,
-        status: formData.status,
-        password: formData.password,
-        address: formData.address,
-      });
+      let res;
+      if (editUser) {
+        res = await axios.put(`http://localhost:5000/api/users/${editUser.id}`, formData);
+      } else {
+        res = await axios.post("http://localhost:5000/api/users/create-user", {
+          fullName: formData.fullName,
+          email: formData.email,
+          phone: formData.phone,
+          department: formData.department,
+          role: formData.role,
+          status: formData.status,
+          password: formData.password,
+          address: formData.address,
+        });
+      }
       alert(res.data.message);
       console.log(res.data);
       onUserCreated?.();
@@ -82,29 +100,22 @@ const CreateUserForm = ({ setShowForm, onUserCreated }) => {
       alert(message);
     }
   };
-
   return (
     <div className="w-full min-h-screen bg-[#f8f5ef] py-4 sm:py-6">
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         <div className="xl:col-span-2 bg-white rounded-[30px] shadow-md border border-[#ececec] p-4 sm:p-6 lg:p-8">
           <div className="mb-8">
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1f1f1f] leading-tight">
-              Create User Account
+              {editUser ? "Edit User Account" : "Create User Account"}
             </h1>
-
             <p className="text-gray-500 text-sm mt-2">
               Register a professional profile inside the organization.
             </p>
           </div>
-
           <div className="flex flex-col items-center justify-center mb-10">
             <div className="relative">
-              <img
-                src={profileImg}
-                alt=""
-                className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border-[6px] border-[#f3e4bc]"
-              />
-
+              <img  src={profileImg}  alt=""
+                className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border-[6px] border-[#f3e4bc]"/>
               <div className="absolute bottom-0 right-0 bg-[#d9a63d] p-2 rounded-full shadow-md">
                 <img src={cameraIcon} alt="" className="w-4 h-4" />
               </div>
@@ -212,7 +223,6 @@ const CreateUserForm = ({ setShowForm, onUserCreated }) => {
                 <label className="text-sm text-gray-600 block mb-2">
                   Account Status
                 </label>
-
                 <div className="border border-[#e5e5e5] rounded-xl px-4 py-3 flex items-center justify-between">
                   <div className="flex items-center w-full">
                     <img  src={switchIcon}  alt=""  className="w-5 h-5 mr-3"/>
@@ -241,179 +251,102 @@ const CreateUserForm = ({ setShowForm, onUserCreated }) => {
                   Confirm Password
                 </label>
                 <div className="border border-[#e5e5e5] rounded-xl px-4 py-3 flex items-center">
-                  <img
-                    src={verifiedIcon}
-                    alt=""
-                    className="w-5 h-5 mr-3"
-                  />
-
-                  <input
-                    type="password"
-                    name="confirmPassword"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    placeholder="********"
-                    className="w-full outline-none bg-transparent text-sm"
-                  />
+                  <img src={verifiedIcon} alt="" className="w-5 h-5 mr-3" />
+                  <input type="password" name="confirmPassword" value={formData.confirmPassword}
+                    onChange={handleChange}  placeholder="********"
+                    className="w-full outline-none bg-transparent text-sm" />
                 </div>
               </div>
             </div>
           </div>
-
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-5">
-              <img
-                src={locationIcon}
-                alt=""
-                className="w-5 h-5"
-              />
-
+              <img src={locationIcon} alt="" className="w-5 h-5" />
               <h2 className="font-bold text-[#5c4033] text-lg">
                 Office Location
               </h2>
             </div>
-
             <label className="text-sm text-gray-600 block mb-2">
               Full Business Address
             </label>
-
             <div className="border border-[#e5e5e5] rounded-2xl px-4 py-4 flex items-start">
-              <img
-                src={locationIcon}
-                alt=""
-                className="w-5 h-5 mr-3 mt-1"
-              />
-
-              <textarea
-                rows="4"
-                name="address"
-                value={formData.address}
-                onChange={handleChange}
+              <img src={locationIcon} alt=""  className="w-5 h-5 mr-3 mt-1" />
+              <textarea rows="4" name="address" value={formData.address} onChange={handleChange}
                 placeholder="Enter the primary office address..."
-                className="w-full outline-none resize-none bg-transparent text-sm"
-              />
+                className="w-full outline-none resize-none bg-transparent text-sm"/>
             </div>
           </div>
-
           <div className="bg-[#f8f1df] border border-[#eedcb5] rounded-2xl p-4 mb-8">
             <div className="flex items-start gap-3">
               <input type="checkbox" className="mt-1" />
-
               <p className="text-sm text-gray-600 leading-6">
                 Authorize professional access and confirm company policies.
               </p>
             </div>
           </div>
-
           <div className="flex flex-col sm:flex-row justify-end gap-4">
-            <button
-              onClick={() => setShowForm(false)}
-              className="border border-[#d9a63d] text-[#6d4c41] px-6 py-3 rounded-xl font-semibold hover:bg-[#f7edd2] transition-all duration-300"
-            >
+            <button onClick={() => setShowForm(false)}
+              className="border border-[#d9a63d] text-[#6d4c41] px-6 py-3 rounded-xl font-semibold hover:bg-[#f7edd2] transition-all duration-300" >
               Discard Changes
             </button>
-
-            <button
-              onClick={handleSubmit}
-              className="bg-[#d9a63d] hover:bg-[#c3922f] px-6 py-3 rounded-xl font-semibold shadow-md transition-all duration-300"
-            >
-              Create Professional Account
+            <button onClick={handleSubmit}
+              className="bg-[#d9a63d] hover:bg-[#c3922f] px-6 py-3 rounded-xl font-semibold shadow-md transition-all duration-300">
+              {editUser ? "Update Professional Account" : "Create Professional Account"}
             </button>
           </div>
         </div>
-
         <div className="space-y-5">
           <div className="bg-[#f8efdf] rounded-[30px] p-5 sm:p-6 border border-[#f1dfb6] shadow-sm">
-            <img
-              src={profileImg}
-              alt=""
-              className="w-full h-[220px] object-cover object-top rounded-2xl mb-5"
-            />
-
+            <img  src={profileImg}  alt=""
+              className="w-full h-[220px] object-cover object-top rounded-2xl mb-5"/>
             <h2 className="text-[#5c4033] font-bold text-xl mb-3">
               Creating Excellence
             </h2>
-
             <p className="text-sm text-gray-600 leading-7">
               Add new members to create a professional organization structure.
             </p>
-
             <div className="mt-5 border-t pt-4 text-sm text-[#5c4033] space-y-3">
               <div className="flex justify-between items-center">
                 <span>Security Best Practices</span>
-
-                <img
-                  src={downIcon}
-                  alt=""
-                  className="w-4 h-4"
-                />
+                <img src={downIcon} alt="" className="w-4 h-4"/>
               </div>
-
               <div className="flex justify-between items-center">
                 <span>Role Capabilities</span>
-
-                <img
-                  src={downIcon}
-                  alt=""
-                  className="w-4 h-4"
-                />
+                <img src={downIcon} alt="" className="w-4 h-4" />
               </div>
             </div>
           </div>
-
           <div className="bg-white rounded-[30px] p-5 sm:p-6 border border-[#ececec] shadow-sm">
             <div className="flex justify-between items-center mb-4">
               <h2 className="font-bold text-[#5c4033]">
                 Completion Progress
               </h2>
-
               <span className="font-semibold text-[#5c4033]">
                 85%
               </span>
             </div>
-
             <div className="w-full h-3 bg-[#eeeeee] rounded-full overflow-hidden mb-5">
               <div className="bg-[#d9a63d] h-full w-[85%] rounded-full"></div>
             </div>
-
             <div className="space-y-4 text-sm text-gray-600">
               <div className="flex items-center gap-3">
-                <img
-                  src={verifiedIcon}
-                  alt=""
-                  className="w-4 h-4"
-                />
-
+                <img src={verifiedIcon} alt="" className="w-4 h-4" />
                 <span>Basic information provided</span>
               </div>
-
               <div className="flex items-center gap-3">
-                <img
-                  src={verifiedIcon}
-                  alt=""
-                  className="w-4 h-4"
-                />
-
+                <img src={verifiedIcon} alt="" className="w-4 h-4"/>
                 <span>Role and department selected</span>
               </div>
-
               <div className="flex items-center gap-3">
-                <img
-                  src={verifiedIcon}
-                  alt=""
-                  className="w-4 h-4"
-                />
-
+                <img src={verifiedIcon} alt="" className="w-4 h-4" />
                 <span>Security credentials pending</span>
               </div>
             </div>
           </div>
-
           <div className="bg-[#f9e7dc] rounded-[30px] p-5 border border-[#f1d1c0]">
             <h2 className="font-bold text-[#b1613f] mb-2">
               Premium Security Enabled
             </h2>
-
             <p className="text-sm text-[#8c5d4a] leading-7">
               Every user account is protected with modern security verification.
             </p>

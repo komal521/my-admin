@@ -22,7 +22,6 @@ const AddCategory = ({ darkMode }) => {
   status: "Active",
   breadcrumb: "",
 });
-
 const [image, setImage] = useState(null);
 const handleChange = (e) => {
   setFormData({
@@ -33,24 +32,18 @@ const handleChange = (e) => {
 const handleSubmit = async () => {
   try {
     const data = new FormData();
-
     Object.keys(formData).forEach((key) => {
       data.append(key, formData[key]);
     });
-
     data.append("featured", featured);
     data.append("sitemap", sitemap);
     data.append("global_search", globalSearch);
-
     data.append("image", image);
-
     const res = await axios.post(
       "http://localhost:5000/api/categories",
       data
     );
-
     alert(res.data.message);
-
   } catch (error) {
     console.log(error);
   }
@@ -160,35 +153,7 @@ const handleSubmit = async () => {
             onChange={handleChange}
             className="w-full resize-none rounded-3xl border border-gray-200 bg-[#fafafa] p-5 text-sm outline-none"/>
             </div>
-            <div className="mt-10 border-t border-gray-100 pt-8">
-              <div className="mb-8 flex items-center">
-                <h2 className="text-lg font-bold text-[#1b1b1b]">
-                  Search Engine Optimization
-                </h2>
-              </div>
-              <div>
-                <div className="mb-2 flex items-center justify-between">
-                  <label className="text-xs font-bold uppercase tracking-wide text-gray-400">
-                    SEO Meta Title
-                  </label>
-                  <img src={infoIcon} alt="" className="h-4 w-4" />
-                </div>
-                <input type="text" name="seo_title" placeholder="Luxury Home Decor"
-         onChange={handleChange}
-        className="h-[54px] w-full rounded-2xl border border-gray-200 bg-[#fafafa] px-4 text-sm outline-none"/>
-                <p className="mt-2 text-xs text-gray-400">
-                  The title displayed in search engine results.
-                </p>
-              </div>
-              <div className="mt-7">
-                <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-400">
-                  SEO Meta Description
-                </label>
-                <textarea rows={5} name="seo_description" placeholder="A concise summary..."
-            onChange={handleChange}
-          className="w-full resize-none rounded-3xl border border-gray-200 bg-[#fafafa] p-5 text-sm outline-none"/>
-              </div>
-            </div>
+            
           </div>
           <div className="space-y-6">
             <div className="rounded-[28px] bg-white p-5 shadow-sm sm:p-6">

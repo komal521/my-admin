@@ -1,8 +1,25 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .touch-pan-y {
+    touch-action: pan-y;
+  }
+}
 html,
-body,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+}
 #root {
   margin: 0;
   padding: 0;
@@ -14,8 +31,9 @@ body,
   box-sizing: border-box;
 }
 body {
-  font-family: sans-serif;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
   background: #f4f7fb;
+  -webkit-font-smoothing: antialiased;
 }
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
@@ -112,9 +130,6 @@ html {
   scroll-behavior: smooth;
 }
 
-body {
-  overflow-x: hidden;
-}
 html,
 body,
 #root {
@@ -122,6 +137,5 @@ body,
 }
 
 body {
-  overflow-x: hidden;
   overflow-y: auto;
 }

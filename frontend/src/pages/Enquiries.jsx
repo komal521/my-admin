@@ -5,165 +5,100 @@ import addIcon from "../assets/add.png";
 import filterIcon from "../assets/filter.png";
 import rightUpIcon from "../assets/right-up.png";
 import dateIcon from "../assets/date.png";
-import moreIcon from "../assets/more (1).png";
 import boxIcon from "../assets/box.png";
 import clockIcon from "../assets/clock.png";
 import checkIcon from "../assets/check-mark.png";
 import informationIcon from "../assets/information.png";
-import a1 from "../assets/a1.jpeg";
-import a4 from "../assets/a4.jpeg";
-import b2 from "../assets/b2.jpeg";
-import b3 from "../assets/b3.jpeg";
-import b4 from "../assets/b4.jpeg";
-import gmailIcon from "../assets/gmail.png";
-import phoneIcon from "../assets/telephone (1).png";
-import messageIcon from "../assets/message.png";
-import fileIcon from "../assets/file (1).png";
-import userIcon from "../assets/user.png";
-import sendIcon from "../assets/send.png";
+import pencilIcon from "../assets/pencil (1).png";
+import binIcon from "../assets/bin (1).png";
+import showIcon from "../assets/show.png";
 const Enquiries = ({ darkMode }) => {
   const defaultCards = [
-    {
-      title: "TOTAL ENQUIRIES",
-      value: "1,284",
-      growth: "+12.5%",
-      icon: boxIcon,
-    bg: "from-[#b9926d] to-[#8b6a45]",
-      iconBg: "bg-white",
-      growthColor: "text-[#1d1d1d]",
-    },
-    {
-      title: "PENDING",
-      value: "42",
-      growth: "-2.4%",
-      icon: clockIcon,
-     bg: "from-[#b9926d] to-[#8b6a45]",
-      iconBg: "bg-white",
-      growthColor: "text-red-500",
-    },
-    {
-      title: "RESOLVED TODAY",
-      value: "18",
-      growth: "+5.2%",
-      icon: checkIcon,
-     bg: "from-[#b9926d] to-[#8b6a45]",
-      iconBg: "bg-white",
-      growthColor: "text-[#1d1d1d]",
-    },
-    {
-      title: "HIGH PRIORITY",
-      value: "09",
-      growth: "+1.8%",
-      icon: informationIcon,
-     bg: "from-[#b9926d] to-[#8b6a45]",
-      iconBg: "bg-white",
-      growthColor: "text-[#1d1d1d]",
-    },
+    { title: "TOTAL ENQUIRIES", value: "00", growth: "+12.5%", icon: boxIcon, bg: "from-[#C8A25A] to-[#8B6A45]", iconBg: "bg-[#1b1b1b]", growthColor: "text-[#1d1d1d]" },
+    { title: "PENDING", value: "00", growth: "-2.4%", icon: clockIcon, bg: "from-[#f8eee4] to-[#d58a43]", iconBg: "bg-white", growthColor: "text-red-500" },
+    { title: "RESOLVED TODAY", value: "00", growth: "+5.2%", icon: checkIcon, bg: "from-[#f8eee4] to-[#d58a43]", iconBg: "bg-white", growthColor: "text-[#1d1d1d]" },
+    { title: "HIGH PRIORITY", value: "00", growth: "+1.8%", icon: informationIcon, bg: "from-[#f8eee4] to-[#d58a43]", iconBg: "bg-white", growthColor: "text-[#1d1d1d]" },
   ];
   const [cards, setCards] = useState(defaultCards);
-  useEffect(() => {
-    const fetchEnquiryCards = async () => {
-      try {
-        const response = await fetch("http://localhost:5000/api/enquiry/cards");
-        const data = await response.json();  
-        if (response.ok) {
-          setCards([
-            {
-              title: "TOTAL ENQUIRIES",
-              value: data.totalEnquiries.toString().padStart(2, "0"),
-              growth: "+12.5%",
-              icon: boxIcon,
-              bg: "from-[#C8A25A] to-[#8B6A45]",
-              iconBg: "bg-[#1b1b1b]",
-              growthColor: "text-[#1d1d1d]",
-            },
-            {
-              title: "PENDING",
-              value: data.pendingEnquiries.toString().padStart(2, "0"),
-              growth: "-2.4%",
-              icon: clockIcon,
-              bg: "from-[#f8eee4] to-[#d58a43]",
-              iconBg: "bg-white",
-              growthColor: "text-red-500",
-            },
-            {
-              title: "RESOLVED TODAY",
-              value: data.resolvedToday.toString().padStart(2, "0"),
-              growth: "+5.2%",
-              icon: checkIcon,
-              bg: "from-[#f8eee4] to-[#d58a43]",
-              iconBg: "bg-white",
-              growthColor: "text-[#1d1d1d]",
-            },
-            {
-              title: "HIGH PRIORITY",
-              value: data.highPriority.toString().padStart(2, "0"),
-              growth: "+1.8%",
-              icon: informationIcon,
-              bg: "from-[#f8eee4] to-[#d58a43]",
-              iconBg: "bg-white",
-              growthColor: "text-[#1d1d1d]",
-            },
-          ]);
-        }
-      } catch (error) {
-        console.error("Error fetching enquiry cards:", error);
+  const [dbEnquiries, setDbEnquiries] = useState([]);
+  const [viewEnquiry, setViewEnquiry] = useState(null);
+  const [editEnquiry, setEditEnquiry] = useState(null);
+  const fetchEnquiries = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/enquiries");
+      const data = await res.json();
+      if (res.ok) setDbEnquiries(data.enquiries || []);
+    } catch (err) {
+      console.error("Error fetching enquiries:", err);
+    }
+  };
+  const fetchCards = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/enquiry/cards");
+      const data = await response.json();
+      if (response.ok) {
+        setCards([
+          { title: "TOTAL ENQUIRIES", value: (data.totalEnquiries || 0).toString().padStart(2, "0"), growth: "+12.5%", icon: boxIcon, bg: "from-[#C8A25A] to-[#8B6A45]", iconBg: "bg-[#1b1b1b]", growthColor: "text-[#1d1d1d]" },
+          { title: "PENDING", value: (data.pendingEnquiries || 0).toString().padStart(2, "0"), growth: "-2.4%", icon: clockIcon, bg: "from-[#f8eee4] to-[#d58a43]", iconBg: "bg-white", growthColor: "text-red-500" },
+          { title: "RESOLVED TODAY", value: (data.resolvedToday || 0).toString().padStart(2, "0"), growth: "+5.2%", icon: checkIcon, bg: "from-[#f8eee4] to-[#d58a43]", iconBg: "bg-white", growthColor: "text-[#1d1d1d]" },
+          { title: "HIGH PRIORITY", value: (data.highPriority || 0).toString().padStart(2, "0"), growth: "+1.8%", icon: informationIcon, bg: "from-[#f8eee4] to-[#d58a43]", iconBg: "bg-white", growthColor: "text-[#1d1d1d]" },
+        ]);
       }
-    };
-    fetchEnquiryCards();
+    } catch (error) {
+      console.error("Error fetching enquiry cards:", error);
+    }
+  };
+  useEffect(() => {
+    fetchCards();
+    fetchEnquiries();
   }, []);
-  const enquiries = [
-    {
-      img: a1,
-      name: "Eleanor Vance",
-      email: "eleanor.v@design.com",
-      phone: "+1 (555) 012-3456",
-      subject: "Product Customization Query",
-      priority: "High",
-      status: "Pending",
-      date: "24 Oct 2023",
-    },
-    {
-      img: a4,
-      name: "Marcus Sterling",
-      email: "m.sterling@luxury.co",
-      phone: "+1 (555) 987-6543",
-      subject: "Bulk Order Discount Request",
-      priority: "Medium",
-      status: "In Progress",
-      date: "24 Oct 2023",
-    },
-    {
-      img: b2,
-      name: "Sophia Chen",
-      email: "sophia.chen@artistry.io",
-      phone: "+1 (555) 246-1357",
-      subject: "Shipping Delay Investigation",
-      priority: "High",
-      status: "Pending",
-      date: "23 Oct 2023",
-    },
-    {
-      img: b3,
-      name: "Julian Rossi",
-      email: "j.rossi@italy-dev.com",
-      phone: "+1 (555) 369-2580",
-      subject: "Wholesale Partnership Inquiry",
-      priority: "Low",
-      status: "Resolved",
-      date: "22 Oct 2023",
-    },
-    {
-      img: b4,
-      name: "Isabella Knight",
-      email: "i.knight@boutique.net",
-      phone: "+1 (555) 741-8520",
-      subject: "Refund Status Update",
-      priority: "Medium",
-      status: "Pending",
-      date: "22 Oct 2023",
-    },
-  ];
+  const handleDeleteEnquiry = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this enquiry?")) return;
+    try {
+      const res = await fetch(`http://localhost:5000/api/enquiries/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        fetchEnquiries();
+        fetchCards();
+      } else {
+        alert("Failed to delete enquiry");
+      }
+    } catch (err) {
+      console.error("Error deleting enquiry:", err);
+      alert("Error deleting enquiry");
+    }
+  };
+  const handleEditEnquirySubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(`http://localhost:5000/api/enquiries/${editEnquiry.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(editEnquiry),
+      });
+      if (res.ok) {
+        setEditEnquiry(null);
+        fetchEnquiries();
+        fetchCards();
+      } else {
+        alert("Failed to update enquiry");
+      }
+    } catch (err) {
+      console.error("Error updating enquiry:", err);
+      alert("Error updating enquiry");
+    }
+  };
+  const enquiries = dbEnquiries.map((e) => ({
+    raw: e,
+    id: e.id,
+    name: e.full_name || e.name,
+    email: e.email,
+    phone: e.phone || "—",
+    subject: e.subject || "General Enquiry",
+    message: e.message || "",
+    priority: e.priority || "Medium",
+    status: e.status || "Pending",
+    date: new Date(e.created_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }),
+  }));
   const getPriorityStyle = (priority) => {
     if (priority === "High") return "bg-red-100 text-red-500";
     if (priority === "Medium") return "bg-yellow-100 text-yellow-600";
@@ -174,9 +109,9 @@ const Enquiries = ({ darkMode }) => {
     if (status === "In Progress") return "bg-yellow-100 text-yellow-700";
     return "bg-green-100 text-green-600";
   };
-   const [activeBtn, setActiveBtn] = useState("filter");
-   const [activeActionBtn, setActiveActionBtn] = useState("reply");
-   const [activePage, setActivePage] = useState(1);
+  const [activeBtn, setActiveBtn] = useState("filter");
+  const [activePage, setActivePage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
   return (
     <div className="p-4 md:p-7">
       <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-6">
@@ -203,84 +138,51 @@ const Enquiries = ({ darkMode }) => {
             }`} >
             <img src={searchIcon} alt="" className="w-4 h-4" />
             <input type="text" placeholder="Search enquiries..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className={`bg-transparent outline-none text-sm w-full ${
                 darkMode ? "text-white" : "text-black"
               }`} />
           </div>
   <button onClick={() => setActiveBtn("filter")}
-    className={`h-[52px] px-5 rounded-full border flex items-center gap-2 text-sm font-medium transition-all duration-300
-    ${
-      activeBtn === "filter"
-        ? "bg-[#c8a25a] text-white border-[#c8a25a]"
-        : darkMode
-        ? "bg-[#1e1e1e] border-[#2c2c2c] text-white"
-        : "bg-white border-[#ececec] text-[#222]"
-    }`}>
-    <img src={filterIcon} alt="" className={`w-4 h-4 ${
-        activeBtn === "filter" ? "brightness-0 invert" : ""
-      }`} />
-    Filter
+    className="flex items-center gap-3 bg-white px-5 py-3 rounded-2xl border border-gray-200 hover:shadow-lg transition-all duration-300">
+    <img src={filterIcon} alt="" className="w-4 h-4" />
+    <span className="font-medium text-yellow-900 text-sm">Filter</span>
   </button>
-  <button  onClick={() => setActiveBtn("export")}
-    className={`h-[52px] px-5 rounded-full border shadow-sm flex items-center gap-2 text-sm font-medium transition-all duration-300
-    ${
-      activeBtn === "export"
-        ? "bg-[#c8a25a] text-white border-[#c8a25a]"
-        : darkMode
-        ? "bg-[#1e1e1e] border-[#2c2c2c] text-white"
-        : "bg-white border-[#ececec] text-[#222]"
-    }`} >
-    <img  src={downloadIcon}  alt=""  className={`w-4 h-4 ${
-        activeBtn === "export" ? "brightness-0 invert" : ""
-      }`}/>
-    Export
+  <button onClick={() => setActiveBtn("export")}
+    className="flex items-center gap-3 bg-white px-5 py-3 rounded-2xl border border-gray-200 hover:shadow-lg transition-all duration-300">
+    <img src={downloadIcon} alt="" className="w-4 h-4" />
+    <span className="font-medium text-yellow-900 text-sm">Export</span>
   </button>
-  <button  onClick={() => setActiveBtn("add")}
-    className={`h-[52px] px-6 rounded-full flex items-center gap-2 text-sm font-semibold transition-all duration-300 border
-    ${
-      activeBtn === "add"
-        ? "bg-[#c8a25a] text-white border-[#c8a25a]"
-        : darkMode
-        ? "bg-[#1e1e1e] border-[#2c2c2c] text-white"
-        : "bg-white border-[#ececec] text-[#222]"
-    }`} >
-    <img  src={addIcon}  alt=""  className={`w-4 h-4 ${
-        activeBtn === "add" ? "brightness-0 invert" : ""
-      }`}/>
-    Add Enquiry
+  <button onClick={() => setActiveBtn("add")}
+    className="flex items-center gap-3 bg-[#6f4e37] text-white px-6 py-3 rounded-2xl shadow-lg hover:scale-105 transition-all duration-300">
+    <img src={addIcon} alt="" className="w-4 h-4 brightness-0 invert" />
+    <span className="font-semibold text-sm">Add Enquiry</span>
   </button>
         </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mt-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mt-10">
         {cards.map((card, index) => (
-          <div
-            key={index}
-            className={`bg-gradient-to-b ${card.bg} rounded-[28px] p-5 min-h-[165px]`}  >
-            <div className="flex items-start justify-between">
-              <div
-                className={`w-14 h-14 rounded-full ${card.iconBg} flex items-center justify-center shadow-sm`} >
-                <img src={card.icon} alt="" className="w-6 h-6" />
+          <div key={index}
+            className="relative overflow-hidden rounded-3xl p-6 shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 group cursor-pointer border border-white/20">
+            <div className="absolute inset-0 bg-[linear-gradient(135deg,#f3d3b5,#b78457,#6f4e37)]"></div>
+            <div className="absolute inset-0 bg-black/20"></div>
+            <div className="flex items-start justify-between relative z-10">
+              <div className="w-14 h-14 rounded-2xl bg-white/90 flex items-center justify-center shadow-lg">
+                <img src={card.icon} alt="" className="w-7 h-7" />
               </div>
-              <div className="flex items-center gap-1">
-                <img src={rightUpIcon} alt="" className="w-3 h-3" />
-                <span
-                  className={`text-sm font-semibold ${card.growthColor}`} >
-                  {card.growth}
-                </span>
-              </div>
+              <span className="text-xs font-semibold px-3 py-1 rounded-full bg-black/80 text-white shadow-md">
+                {card.growth}
+              </span>
             </div>
-            <div className="mt-8">
-              <p className="text-[11px] tracking-[2px] font-semibold text-[#4a311d]">
-                {card.title}
-              </p>
-              <h2 className="text-[40px] leading-none font-bold mt-3 text-[#1a1a1a]">
-                {card.value}
-              </h2>
+            <div className="mt-8 relative z-10">
+              <p className="text-xs tracking-[2px] text-white/80 font-semibold uppercase">{card.title}</p>
+              <h2 className="text-3xl font-bold text-white mt-4 leading-none">{card.value}</h2>
             </div>
           </div>
         ))}
       </div>
-      <div className="grid grid-cols-1 2xl:grid-cols-[1fr_360px] gap-6 mt-8">
+      <div className="grid grid-cols-1 gap-6 mt-8">
         <div
           className={`rounded-3xl p-4 md:p-6 border overflow-hidden
         ${
@@ -301,6 +203,8 @@ const Enquiries = ({ darkMode }) => {
               <input
                 type="text"
                 placeholder="Search by name, email..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="bg-transparent outline-none text-sm w-full" />
             </div>
             <div className="flex gap-3 flex-wrap">
@@ -328,54 +232,74 @@ const Enquiries = ({ darkMode }) => {
                 </tr>
               </thead>
               <tbody>
-                {enquiries.map((item, index) => (
-                  <tr key={index} className="border-b last:border-none">
-                    <td className="py-4">
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={item.img}
-                          alt=""
-                          className="w-11 h-11 rounded-full object-cover" />
-                        <div>
-                          <h4 className="font-medium text-sm">{item.name}</h4>
-                          <p className="text-xs text-gray-500">
-                            {item.email}
-                          </p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="text-sm">{item.phone}</td>
-                    <td className="text-sm">{item.subject}</td>
-                    <td>
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs ${getPriorityStyle(
-                          item.priority
-                        )}`} >
-                        {item.priority}
-                      </span>
-                    </td>
-                    <td>
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs ${getStatusStyle(
-                          item.status
-                        )}`} >
-                        {item.status}
-                      </span>
-                    </td>
-                    <td className="text-sm">{item.date}</td>
-                    <td>
-                      <button>
-                        <img src={moreIcon} alt="" className="w-5 h-5" />
-                      </button>
+                {enquiries.length === 0 ? (
+                  <tr>
+                    <td colSpan="7" className="py-12 text-center text-gray-400 text-sm">
+                      No enquiries yet. Enquiries from the website contact form will appear here.
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  enquiries.filter(e => e.name?.toLowerCase().includes(searchQuery.toLowerCase()) || e.email?.toLowerCase().includes(searchQuery.toLowerCase())).map((item, index) => (
+                    <tr key={item.id || index} className="border-b last:border-none hover:bg-[#faf7f0] transition">
+                      <td className="py-4">
+                        <div className="flex items-center gap-3">
+                          {/* Avatar with initials */}
+                          <div className="w-11 h-11 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 font-bold text-sm flex-shrink-0">
+                            {item.name ? item.name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0,2) : "?"}
+                          </div>
+                          <div>
+                            <h4 className="font-medium text-sm">{item.name}</h4>
+                            <p className="text-xs text-gray-500">{item.email}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="text-sm">{item.phone}</td>
+                      <td className="text-sm max-w-[180px] truncate">{item.subject}</td>
+                      <td>
+                        <span className={`px-3 py-1 rounded-full text-xs ${getPriorityStyle(item.priority)}`}>
+                          {item.priority}
+                        </span>
+                      </td>
+                      <td>
+                        <span className={`px-3 py-1 rounded-full text-xs ${getStatusStyle(item.status)}`}>
+                          {item.status}
+                        </span>
+                      </td>
+                      <td className="text-sm whitespace-nowrap">{item.date}</td>
+                      <td>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => setViewEnquiry(item)}
+                            className="w-8 h-8 rounded-full flex items-center justify-center bg-blue-50 hover:bg-blue-100 transition-all"
+                            title="View"
+                          >
+                            <img src={showIcon} alt="View" className="w-4 h-4 opacity-80" />
+                          </button>
+                          <button
+                            onClick={() => setEditEnquiry(item.raw)}
+                            className="w-8 h-8 rounded-full flex items-center justify-center bg-amber-50 hover:bg-amber-100 transition-all"
+                            title="Edit"
+                          >
+                            <img src={pencilIcon} alt="Edit" className="w-4 h-4 opacity-80" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteEnquiry(item.id)}
+                            className="w-8 h-8 rounded-full flex items-center justify-center bg-red-50 hover:bg-red-100 transition-all"
+                            title="Delete"
+                          >
+                            <img src={binIcon} alt="Delete" className="w-4 h-4 opacity-80" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 mt-6">
             <p className="text-sm text-gray-500">
-              Showing 5 of 1,284 results
+              Showing {enquiries.length} {enquiries.length === 1 ? "result" : "results"}
             </p>
             <div className="flex items-center gap-2">
               <button
@@ -435,186 +359,104 @@ const Enquiries = ({ darkMode }) => {
             </div>
           </div>
         </div>
-        <div
-          className={`rounded-[30px] p-5 border h-fit sticky top-5
-          ${
-            darkMode
-              ? "bg-[#1e1e1e] border-[#2c2c2c] text-white"
-              : "bg-[#f8f5f0] border-[#ececec] text-[#1a1a1a]"
-          }`} >
-          <div className="flex items-start justify-between">
-            <div>
-              <h2 className="text-lg font-bold">Enquiry Preview</h2>
-              <p className="text-xs text-gray-500 mt-1">
-                REF: ESO-1104
-              </p>
-            </div>
-            <span className="text-[10px] px-3 py-1 rounded-full bg-green-100 text-green-600 font-medium">
-              RESOLVED
-            </span>
-          </div>
-          <div className="mt-5 bg-[#ebe7e1] rounded-[24px] p-5 text-center">
-            <img
-              src={b2}
-              alt=""
-              className="w-20 h-20 rounded-full object-cover mx-auto" />
-            <h3 className="font-bold text-lg mt-3">Julian Rossi</h3>
-            <p className="text-xs text-gray-500">
-              CEO @ Italy Dev Group
-            </p>
-            <div className="flex items-center justify-center gap-3 mt-4">
-              <button className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm">
-                <img src={gmailIcon} alt="" className="w-4 h-4" />
-              </button>
-              <button className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm">
-                <img src={phoneIcon} alt="" className="w-4 h-4" />
-              </button>
-              <button className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm">
-                <img src={messageIcon} alt="" className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-          <div className="mt-5">
-            <p className="text-[11px] tracking-[2px] text-gray-500 font-semibold">
-              SUBJECT
-            </p>
-            <h3 className="font-semibold mt-2 leading-6">
-              Wholesale Partnership Inquiry for European Market Expansion
-            </h3>
-          </div>
-          <div className="mt-5 bg-[#d6b98b] rounded-[24px] p-5">
-            <p className="text-sm leading-7 text-[#5d4023]">
-              "Dear Team, we are interested in wholesale distribution &
-              potential long-term strategic partnership for our distribution
-              expansion."
-            </p>
-            <button className="mt-4 text-sm font-medium ">
-              View Message 
+      </div>
+      {viewEnquiry && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className={`w-full max-w-md rounded-3xl p-6 ${darkMode ? "bg-[#1e293b]" : "bg-white"} shadow-2xl relative`}>
+            <button onClick={() => setViewEnquiry(null)} className="absolute top-4 right-4 text-gray-500 hover:text-red-500 font-bold text-xl">
+              x
             </button>
-          </div>
-          <div className="mt-6">
-            <h4 className="text-[11px] tracking-[2px] text-gray-500 font-semibold">
-              ATTACHMENTS (2)
-            </h4>
-            <div className="mt-4 space-y-3">
-              <div className="bg-white rounded-2xl p-4 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-xl bg-[#f6f2eb] flex items-center justify-center">
-                    <img src={fileIcon} alt="" className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-medium text-black">
-                      company_profile_2024.pdf
-                    </h4>
-                    <p className="text-xs text-gray-500">
-                      2.4 MB
-                    </p>
-                  </div>
+            <h2 className={`text-2xl font-bold mb-6 ${darkMode ? "text-white" : "text-black"}`}>Enquiry Details</h2>
+            <div className="space-y-4 text-sm">
+              <div className="flex justify-center mb-4">
+                <div className="w-20 h-20 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 font-bold text-2xl">
+                  {viewEnquiry.name ? viewEnquiry.name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0,2) : "?"}
                 </div>
-                <button>
-                  <img src={downloadIcon} alt="" className="w-5 h-5"  />
-                </button>
               </div>
-              <div className="bg-white rounded-2xl p-4 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-xl bg-[#f6f2eb] flex items-center justify-center">
-                    <img src={fileIcon} alt="" className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-medium text-black">
-                      wholesale_proposal.xlsx
-                    </h4>
-                    <p className="text-xs text-gray-500">
-                      1.8 MB
-                    </p>
-                  </div>
-                </div>
-                <button>
-                  <img src={downloadIcon} alt="" className="w-5 h-5" />
-                </button>
-              </div>
+              <p><strong>Name:</strong> {viewEnquiry.name}</p>
+              <p><strong>Email:</strong> {viewEnquiry.email}</p>
+              <p><strong>Phone:</strong> {viewEnquiry.phone}</p>
+              <p><strong>Subject:</strong> {viewEnquiry.subject}</p>
+              <p><strong>Message:</strong> {viewEnquiry.message || "N/A"}</p>
+              <p>
+                <strong>Priority:</strong>{" "}
+                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getPriorityStyle(viewEnquiry.priority)}`}>
+                  {viewEnquiry.priority}
+                </span>
+              </p>
+              <p>
+                <strong>Status:</strong>{" "}
+                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusStyle(viewEnquiry.status)}`}>
+                  {viewEnquiry.status}
+                </span>
+              </p>
+              <p><strong>Date:</strong> {viewEnquiry.date}</p>
             </div>
-          </div>
-          <div className="mt-7">
-            <h4 className="text-[11px] tracking-[2px] text-gray-500 font-semibold">
-              ACTIVITY TIMELINE
-            </h4>
-            <div className="mt-5 space-y-5">
-              <div className="flex gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#efe4d3] flex items-center justify-center">
-                  <img src={gmailIcon} alt="" className="w-4 h-4" />
-                </div>
-                <div>
-                  <h5 className="text-sm font-semibold">
-                    Enquiry Received
-                  </h5>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Oct 22, 2023 at 10:45 AM
-                  </p>
-                </div>
-              </div>
-              <div className="flex gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#efe4d3] flex items-center justify-center">
-                  <img src={userIcon} alt="" className="w-4 h-4" />
-                </div>
-                <div>
-                  <h5 className="text-sm font-semibold">
-                    Assigned to Sarah M.
-                  </h5>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Customer Success Manager
-                  </p>
-                </div>
-              </div>
-              <div className="flex gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#efe4d3] flex items-center justify-center">
-                  <img src={clockIcon} alt="" className="w-4 h-4" />
-                </div>
-                <div>
-                  <h5 className="text-sm font-semibold">
-                    Marked as Resolved
-                  </h5>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Oct 23, 2023 at 9:30 PM
-                  </p>
-                </div>
-              </div>
+            <div className="mt-8 text-right">
+              <button onClick={() => setViewEnquiry(null)} className="px-6 py-2 rounded-xl bg-gray-200 text-gray-800 font-semibold hover:bg-gray-300">
+                Close
+              </button>
             </div>
-          </div>
-          <div className="flex gap-3 mt-7">
-           <button
-    onClick={() => setActiveActionBtn("resolved")}
-    className={`flex-1 h-[48px] rounded-full border text-sm font-medium transition-all duration-300 flex items-center justify-center
-    ${
-      activeActionBtn === "resolved"
-        ? "bg-[#c8a25a] text-white border-[#c8a25a]"
-        : darkMode
-        ? "bg-[#1e1e1e] border-[#2c2c2c] text-white"
-        : "bg-white border-[#d7c5a4] text-[#222]"
-    }`} >
-    Mark Resolved
-  </button>
-  <button
-    onClick={() => setActiveActionBtn("reply")}
-    className={`flex-1 h-[48px] rounded-full text-sm font-medium flex items-center justify-center gap-2 transition-all duration-300 border
-    ${
-      activeActionBtn === "reply"
-        ? "bg-[#8b6a45] text-white border-[#8b6a45]"
-        : darkMode
-        ? "bg-[#1e1e1e] border-[#2c2c2c] text-white"
-        : "bg-white border-[#ececec] text-[#222]"
-    }`} >
-    <img  src={sendIcon}  alt=""
-      className={`w-4 h-4 ${
-        activeActionBtn === "reply" ? "brightness-0 invert" : ""
-      }`}  />
-    Reply
-  </button>
           </div>
         </div>
-      </div>
+      )}
+      {editEnquiry && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <form onSubmit={handleEditEnquirySubmit} className={`w-full max-w-md rounded-3xl p-6 ${darkMode ? "bg-[#1e293b]" : "bg-white"} shadow-2xl relative`}>
+            <button type="button" onClick={() => setEditEnquiry(null)} className="absolute top-4 right-4 text-gray-500 hover:text-red-500 font-bold text-xl">
+              x
+            </button>
+            <h2 className={`text-2xl font-bold mb-6 ${darkMode ? "text-white" : "text-black"}`}>Edit Enquiry #{editEnquiry.id}</h2>
+            <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-1">
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Subject</label>
+                <input  type="text"  required  value={editEnquiry.subject || ""}
+                  onChange={(e) => setEditEnquiry({ ...editEnquiry, subject: e.target.value })}
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#6f4e37]" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Message</label>
+                <textarea value={editEnquiry.message || ""}
+                  onChange={(e) => setEditEnquiry({ ...editEnquiry, message: e.target.value })}
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#6f4e37] h-24" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Priority</label>
+                  <select
+                    value={editEnquiry.priority || "Medium"}
+                    onChange={(e) => setEditEnquiry({ ...editEnquiry, priority: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#6f4e37] bg-white" >
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Status</label>
+                  <select
+                    value={editEnquiry.status || "Pending"}
+                    onChange={(e) => setEditEnquiry({ ...editEnquiry, status: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#6f4e37] bg-white">
+                    <option value="Pending">Pending</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Resolved">Resolved</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div className="mt-8 flex justify-end gap-3">
+              <button type="button" onClick={() => setEditEnquiry(null)} className="px-6 py-2 rounded-xl bg-gray-200 text-gray-800 font-semibold hover:bg-gray-300">
+                Cancel
+              </button>
+              <button type="submit" className="px-6 py-2 rounded-xl bg-[#6f4e37] text-white font-semibold hover:opacity-90">
+                Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
     </div>
   );
 };
-
 export default Enquiries;

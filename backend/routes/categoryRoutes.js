@@ -56,9 +56,9 @@ router.post("/", upload.single("image"), async (req, res) => {
 
     const image = req.file ? req.file.filename : "";
 
-    const sql = `
-      INSERT INTO categories 
-      (
+    await pool.query(
+      `
+      INSERT INTO categories (
         category_name,
         slug,
         parent_category,
@@ -73,58 +73,33 @@ router.post("/", upload.single("image"), async (req, res) => {
         image
       )
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
+      `,
+      [
+        category_name,
+        slug,
+        parent_category,
+        description,
+        seo_title,
+        seo_description,
+        status || "Active",
+        featured || 0,
+        sitemap || 1,
+        global_search || 1,
+        breadcrumb,
+        image,
+      ]
+    );
 
-    await pool.query(sql, [
-      category_name,
-      slug,
-      parent_category,
-      description,
-      seo_title,
-      seo_description,
-      status,
-      featured,
-      sitemap,
-      global_search,
-      breadcrumb,
-      image,
-    ]);
-
-    res.json({
+    res.status(201).json({
       success: true,
       message: "Category Added Successfully",
     });
-
   } catch (error) {
     console.log(error);
 
     res.status(500).json({
       success: false,
       message: "Server Error",
-    });
-  }
-});
-
-router.get("/cards", async (req, res) => {
-  try {
-    await ensureCategoriesTable();
-
-    const [totalRes] = await pool.query("SELECT COUNT(*) as count FROM categories");
-    const [activeRes] = await pool.query("SELECT COUNT(*) as count FROM categories WHERE status='Active'");
-    const [trendingRes] = await pool.query("SELECT COUNT(*) as count FROM categories WHERE status='Trending'");
-    const [hiddenRes] = await pool.query("SELECT COUNT(*) as count FROM categories WHERE status='Inactive' OR status='Hidden'");
-
-    res.json({
-      totalCategories: totalRes[0]?.count || 0,
-      activeCategories: activeRes[0]?.count || 0,
-      trendingNow: trendingRes[0]?.count || 0,
-      hiddenItems: hiddenRes[0]?.count || 0
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      success: false,
-      message: "Error fetching category cards",
     });
   }
 });
@@ -137,14 +112,73 @@ router.get("/", async (req, res) => {
       "SELECT * FROM categories ORDER BY id DESC"
     );
 
-    res.json(rows);
-
+    res.status(200).json({
+      success: true,
+      categories: rows,
+    });
   } catch (error) {
     console.log(error);
 
     res.status(500).json({
       success: false,
       message: "Error fetching categories",
+    });
+  }
+});
+
+router.get("/cards", async (req, res) => {
+  try {
+    const [totalRes] = await pool.query(
+      "SELECT COUNT(*) as count FROM categories"
+    );
+
+    const [activeRes] = await pool.query(
+      "SELECT COUNT(*) as count FROM categories WHERE status='Active'"
+    );
+
+    const [trendingRes] = await pool.query(
+      "SELECT COUNT(*) as count FROM categories WHERE status='Trending'"
+    );
+
+    const [hiddenRes] = await pool.query(
+      "SELECT COUNT(*) as count FROM categories WHERE status='Inactive' OR status='Hidden'"
+    );
+
+    res.json({
+      totalCategories: totalRes[0].count || 0,
+      activeCategories: activeRes[0].count || 0,
+      trendingNow: trendingRes[0].count || 0,
+      hiddenItems: hiddenRes[0].count || 0,
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Cards Fetch Error",
+    });
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await pool.query(
+      "DELETE FROM categories WHERE id = ?",
+      [id]
+    );
+
+    res.json({
+      success: true,
+      message: "Category Deleted Successfully",
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Delete Failed",
     });
   }
 });

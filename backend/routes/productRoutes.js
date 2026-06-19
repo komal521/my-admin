@@ -1,8 +1,6 @@
 const express = require("express");
 const router = express.Router();
-
 const pool = require("../db");
-
 const ensureProductsTable = async () => {
   await pool.execute(`
     CREATE TABLE IF NOT EXISTS products (
@@ -32,7 +30,6 @@ const ensureProductsTable = async () => {
     )
   `);
 };
-
 router.get("/", async (req, res) => {
   try {
     await ensureProductsTable();
@@ -41,7 +38,6 @@ router.get("/", async (req, res) => {
       FROM products
       ORDER BY id DESC
     `);
-
     res.json({
       success: true,
       products,
@@ -55,11 +51,9 @@ router.get("/", async (req, res) => {
     });
   }
 });
-
 router.post("/create-product", async (req, res) => {
   try {
     await ensureProductsTable();
-
     const {
       productName,
       description,
@@ -87,17 +81,34 @@ router.post("/create-product", async (req, res) => {
     if (!productName || !sku || !brand || !category || !basePrice) {
       return res.status(400).json({
         success: false,
-        message: "Product name, SKU, brand, category aur base price required hai",
+        message:
+          "Product name, SKU, brand, category aur base price required hai",
       });
     }
-
     const [result] = await pool.execute(
       `
       INSERT INTO products (
-        product_name, description, sku, brand, category, sub_category,
-        base_price, discount_price, stock_quantity, is_active, is_featured,
-        weight, length, width, height, base_color, tags, variants,
-        meta_title, meta_description, images
+        product_name,
+        description,
+        sku,
+        brand,
+        category,
+        sub_category,
+        base_price,
+        discount_price,
+        stock_quantity,
+        is_active,
+        is_featured,
+        weight,
+        length,
+        width,
+        height,
+        base_color,
+        tags,
+        variants,
+        meta_title,
+        meta_description,
+        images
       )
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
@@ -125,7 +136,6 @@ router.post("/create-product", async (req, res) => {
         JSON.stringify(images || []),
       ]
     );
-
     res.json({
       success: true,
       message: "Product Created Successfully",
@@ -133,17 +143,45 @@ router.post("/create-product", async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-
     if (error.code === "ER_DUP_ENTRY") {
       return res.status(409).json({
         success: false,
         message: "This SKU already exists",
       });
     }
+    res.status(500).json({
+      success: false,
+      message: "Product create nahi hua",
+      error: error.message,
+    });
+  }
+});
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const [result] = await pool.execute(
+      "DELETE FROM products WHERE id = ?",
+      [id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Product deleted successfully",
+    });
+  } catch (error) {
+    console.log(error);
 
     res.status(500).json({
       success: false,
-      message: "Product create nahi hua. Backend/database check karo.",
+      message: "Delete failed",
       error: error.message,
     });
   }
