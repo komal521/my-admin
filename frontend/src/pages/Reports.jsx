@@ -8,7 +8,6 @@ import userIcon from "../assets/user.png";
 import growthIcon from "../assets/growth.png";
 import filterIcon from "../assets/filter.png";
 import downloadIcon from "../assets/download.png";
-
 const defaultStats = [
   {
     title: "Total Revenue",
@@ -35,16 +34,17 @@ const defaultStats = [
     percent: "+4.1%",
   },
 ];
-
 const Reports = ({ darkMode }) => {
   const [stats, setStats] = useState(defaultStats);
+  const [revenueData, setRevenueData] = useState(Array(12).fill(0));
+  const [recentReports, setRecentReports] = useState([]);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
         const response = await fetch("http://localhost:5000/api/report/cards");
         const data = await response.json();
-        
+      
         if (response.ok) {
           setStats([
             {
@@ -77,46 +77,73 @@ const Reports = ({ darkMode }) => {
         console.error("Error fetching report cards data:", error);
       }
     };
+    const fetchRevenueGraph = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/revenue-graph");
+        const data = await response.json();
+        if (data.success) {
+          setRevenueData(data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching revenue graph:", error);
+      }
+    };
+    const fetchRecentReports = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/report/recent");
+        const data = await response.json();
+        if (data.success) {
+          setRecentReports(data.recentReports);
+        }
+      } catch (error) {
+        console.error("Error fetching recent reports:", error);
+      }
+    };
+
     fetchStats();
+    fetchRevenueGraph();
+    fetchRecentReports();
   }, []);
+  const chartData = revenueData.slice(0, 9);
+  const maxVal = Math.max(...chartData, 10000);
+  const points = chartData.map((val, idx) => {
+    const x = Math.round((idx / 8) * 640 + 20);
+    const y = Math.round(270 - (val / maxVal) * 220); 
+    return `${x},${y}`;
+  });
+  const lineD = points.length > 0 ? `M ${points.join(" L ")}` : "M 20 270 L 660 270";
+  const areaD = `${lineD} L ${points[points.length - 1]?.split(",")[0] || 660} 300 L 20 300 Z`;
+  const yLabels = [
+    Math.round(maxVal),
+    Math.round(maxVal * 0.75),
+    Math.round(maxVal * 0.5),
+    Math.round(maxVal * 0.25),
+    0
+  ];
 
   return (
     <div
       className={`p-3 sm:p-4 md:p-6 lg:p-8 min-h-screen transition-all duration-300
       ${darkMode ? "bg-[#0f0f0f]" : "bg-[#f5f7fb]"}`}>
       {/* TOP CARDS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mt-10">
         {stats.map((item, index) => (
-          <div
-            key={index}
-            className="rounded-3xl p-5 text-white shadow-sm cursor-pointer
-            bg-gradient-to-br from-[#c08a61] via-[#a96942] to-[#7a4b2f]
-            transition-all duration-300
-            hover:-translate-y-2
-            hover:shadow-[0_20px_50px_rgba(169,105,66,0.35)]
-            hover:scale-[1.02]"
-          >
-            <div className="flex items-start justify-between mb-6">
-              {/* LEFT ICON */}
-              <div className="w-11 h-11 rounded-xl bg-white flex items-center justify-center shadow-sm">
-                <img
-                  src={item.icon}
-                  alt=""
-                  className="w-5 h-5 object-contain"
-                />
+          <div key={index}
+            className="relative overflow-hidden rounded-3xl p-6 shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 group cursor-pointer border border-white/20">
+            <div className="absolute inset-0 bg-[linear-gradient(135deg,#f3d3b5,#b78457,#6f4e37)]"></div>
+            <div className="absolute inset-0 bg-black/20"></div>
+            <div className="flex items-start justify-between relative z-10">
+              <div className="w-14 h-14 rounded-2xl bg-white/90 flex items-center justify-center shadow-lg">
+                <img src={item.icon} alt="" className="w-7 h-7" />
               </div>
-              <div
-                className="flex items-center gap-1 text-xs font-semibold
-                bg-black text-white px-3 py-1 rounded-full shadow-md">
-                <img
-                  src={rightUp1}
-                  alt=""
-                  className="w-3.5 h-3.5 object-contain" />
-                <span>{item.percent}</span>
-              </div>
+              <span className="text-xs font-semibold px-3 py-1 rounded-full bg-black/80 text-white shadow-md">
+                {item.percent}
+              </span>
             </div>
-            <p className="text-sm text-white/80">{item.title}</p>
-            <h2 className="text-3xl font-bold mt-1">{item.value}</h2>
+            <div className="mt-8 relative z-10">
+              <p className="text-xs tracking-[2px] text-white/80 font-semibold uppercase">{item.title}</p>
+              <h2 className="text-3xl font-bold text-white mt-4 leading-none">{item.value}</h2>
+            </div>
           </div>
         ))}
       </div>
@@ -128,15 +155,13 @@ const Reports = ({ darkMode }) => {
             darkMode
               ? "bg-[#161616] border-[#232323]"
               : "bg-white border-[#ececec]"
-          }`}
-        >
-          {/* HEADER */}
+          }`} >
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div>
               <h2
                 className={`text-xl font-semibold
                 ${darkMode ? "text-white" : "text-[#222]"}`} >
-                Revenue Performance
+                Revenue Performance (Total: {stats[0]?.value || "..."})
               </h2>
               <p className={`text-sm mt-1
                 ${darkMode ? "text-gray-400" : "text-gray-500"}`} >
@@ -171,20 +196,16 @@ const Reports = ({ darkMode }) => {
               <div
                 className={`absolute left-0 top-0 h-full flex flex-col justify-between text-xs
                 ${darkMode ? "text-gray-500" : "text-gray-400"}`} >
-                <span>₹10000</span>
-                <span>₹7500</span>
-                <span>₹5000</span>
-                <span>₹2500</span>
-                <span>₹0</span>
+                {yLabels.map((val, idx) => (
+                  <span key={idx}>₹{val.toLocaleString("en-IN")}</span>
+                ))}
               </div>
-
               <div className="absolute inset-0 left-12 flex flex-col justify-between">
                 {[...Array(5)].map((_, i) => (
                   <div
                     key={i}
                     className={`border-t border-dashed
-                    ${darkMode ? "border-[#2b2b2b]" : "border-[#ececec]"}`}
-                  />
+                    ${darkMode ? "border-[#2b2b2b]" : "border-[#ececec]"}`} />
                 ))}
               </div>
               <svg
@@ -203,29 +224,15 @@ const Reports = ({ darkMode }) => {
                   </linearGradient>
                 </defs>
                 <path
-                  d="M20 230 
-                  C70 240, 90 250, 130 190
-                  C170 130, 210 200, 260 170
-                  C320 130, 350 80, 410 110
-                  C470 140, 500 50, 570 70
-                  C620 80, 650 90, 690 70"
+                  d={lineD}
                   fill="none"
                   stroke="#d9a63d"
                   strokeWidth="4"
                   strokeLinecap="round" />
-
                 <path
-                  d="M20 230 
-                  C70 240, 90 250, 130 190
-                  C170 130, 210 200, 260 170
-                  C320 130, 350 80, 410 110
-                  C470 140, 500 50, 570 70
-                  C620 80, 650 90, 690 70
-                  L690 320 L20 320 Z"
+                  d={areaD}
                   fill="url(#paint0_linear)"  />
               </svg>
-
-              {/* MONTHS */}
               <div
                 className={`absolute bottom-0 left-12 right-0 flex justify-between text-sm
                 ${darkMode ? "text-gray-500" : "text-gray-400"}`}>
@@ -272,7 +279,7 @@ const Reports = ({ darkMode }) => {
               ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
               Total Share
             </p>
-            <span className="text-[#d9a63d] font-semibold">100%</span>
+            <span className="text-black font-semibold">100%</span>
           </div>
         </div>
       </div>
@@ -305,7 +312,7 @@ const Reports = ({ darkMode }) => {
           key={index}
           className="flex flex-col items-center justify-end gap-3 flex-1" >
           <div
-            className={`${item.height} w-full max-w-[42px] rounded-xl bg-gradient-to-t from-[#c07c2b] to-[#e4b04d] shadow-md transition-all duration-300 hover:scale-105`} />
+            className={`${item.height} w-full max-w-[42px] rounded-xl bg-[#6f4e37] shadow-md transition-all duration-300 hover:scale-105`} />
 
           <span
             className={`text-xs whitespace-nowrap
@@ -336,7 +343,7 @@ const Reports = ({ darkMode }) => {
           Operational ledger for the current period
         </p>
       </div>
-      <button className="text-[#d9a63d] text-sm font-medium hover:underline">
+      <button className="text-black text-sm font-medium hover:underline">
         View All
       </button>
     </div>
@@ -356,75 +363,40 @@ const Reports = ({ darkMode }) => {
           <span>Status</span>
           <span className="text-right">Date</span>
         </div>
-        {[
-          {
-            id: "#REP-2041",
-            client: "Nexus Corp",
-            revenue: "₹12,400.00",
-            status: "Paid",
-            color: "bg-gray-200 text-gray-700",
-            date: "Oct 12, 2023",
-          },
-          {
-            id: "#REP-2042",
-            client: "Altos Design",
-            revenue: "₹8,250.00",
-            status: "Pending",
-            color: "bg-yellow-100 text-yellow-700",
-            date: "Oct 14, 2023",
-          },
-          {
-            id: "#REP-2043",
-            client: "Quantom AI",
-            revenue: "₹15,100.00",
-            status: "Paid",
-            color: "bg-gray-200 text-gray-700",
-            date: "Oct 15, 2023",
-          },
-          {
-            id: "#REP-2044",
-            client: "GreenLeaf Co",
-            revenue: "₹6,800.00",
-            status: "Paid",
-            color: "bg-gray-200 text-gray-700",
-            date: "Oct 17, 2023",
-          },
-          {
-            id: "#REP-2045",
-            client: "Starlight Dev",
-            revenue: "₹11,200.00",
-            status: "Overdue",
-            color: "bg-red-100 text-red-600",
-            date: "Oct 20, 2023",
-          },
-        ].map((item, index) => (
-          <div
-            key={index}
-            className={`grid grid-cols-[1fr_1.5fr_1fr_1fr_1fr] py-5 text-sm items-center border-b
-            ${
-              darkMode
-                ? "border-[#222] text-gray-300"
-                : "border-[#f1f1f1] text-gray-700"
-            }`}  >
-            <span className="text-[#d9a63d] font-medium">{item.id}</span>
-            <span>{item.client}</span>
-            <span className="font-medium">{item.revenue}</span>
-            <div>
-              <span
-                className={`px-3 py-1 rounded-full text-xs font-medium ${item.color}`} >
-                {item.status}
-              </span>
+        {recentReports.length > 0 ? (
+          recentReports.map((item, index) => (
+            <div
+              key={index}
+              className={`grid grid-cols-[1fr_1.5fr_1fr_1fr_1fr] py-5 text-sm items-center border-b
+              ${
+                darkMode
+                  ? "border-[#222] text-gray-300"
+                  : "border-[#f1f1f1] text-gray-700"
+              }`} >
+              <span className="text-[#d9a63d] font-medium">{item.id}</span>
+              <span>{item.client}</span>
+              <span className="font-medium">{item.revenue}</span>
+              <div>
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-medium ${item.color}`} >
+                  {item.status}
+                </span>
+              </div>
+              <span className="text-right">{item.date}</span>
             </div>
-            <span className="text-right">{item.date}</span>
+          ))
+        ) : (
+          <div className="py-12 text-center text-gray-400 font-medium">
+            No recent reports found in the database.
           </div>
-        ))}
+        )}
       </div>
     </div>
     <div className="mt-5 flex flex-col sm:flex-row items-center justify-between gap-4">
       <p
         className={`text-sm
         ${darkMode ? "text-gray-400" : "text-gray-500"}`}  >
-        Showing 5 of 48 reports
+        Showing {recentReports && recentReports.length > 0 ? recentReports.length : 5} of {recentReports && recentReports.length > 0 ? recentReports.length : 48} reports
       </p>
       <div className="flex items-center gap-2">
         <button
@@ -439,7 +411,7 @@ const Reports = ({ darkMode }) => {
             alt=""
             className="w-4 h-4 object-contain"  />
         </button>
-        <button className="w-9 h-9 rounded-xl bg-[#c07c2b] text-white text-sm font-medium shadow-md">
+        <button className="w-9 h-9 rounded-xl bg-[#6f4e37] text-white text-sm font-medium shadow-md">
           1
         </button>
         <button

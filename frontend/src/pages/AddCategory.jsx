@@ -22,7 +22,6 @@ const AddCategory = ({ darkMode }) => {
   status: "Active",
   breadcrumb: "",
 });
-
 const [image, setImage] = useState(null);
 const handleChange = (e) => {
   setFormData({
@@ -33,24 +32,18 @@ const handleChange = (e) => {
 const handleSubmit = async () => {
   try {
     const data = new FormData();
-
     Object.keys(formData).forEach((key) => {
       data.append(key, formData[key]);
     });
-
     data.append("featured", featured);
     data.append("sitemap", sitemap);
     data.append("global_search", globalSearch);
-
     data.append("image", image);
-
     const res = await axios.post(
       "http://localhost:5000/api/categories",
       data
     );
-
     alert(res.data.message);
-
   } catch (error) {
     console.log(error);
   }

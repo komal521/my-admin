@@ -1,8 +1,6 @@
 const express = require("express");
 const router = express.Router();
-
 const pool = require("../db");
-
 const ensureProductsTable = async () => {
   await pool.execute(`
     CREATE TABLE IF NOT EXISTS products (
@@ -32,24 +30,20 @@ const ensureProductsTable = async () => {
     )
   `);
 };
-
 router.get("/", async (req, res) => {
   try {
     await ensureProductsTable();
-
     const [products] = await pool.execute(`
       SELECT *
       FROM products
       ORDER BY id DESC
     `);
-
     res.json({
       success: true,
       products,
     });
   } catch (error) {
     console.log(error);
-
     res.status(500).json({
       success: false,
       message: "Products load nahi ho paaye",
@@ -57,12 +51,9 @@ router.get("/", async (req, res) => {
     });
   }
 });
-
-/* CREATE PRODUCT */
 router.post("/create-product", async (req, res) => {
   try {
     await ensureProductsTable();
-
     const {
       productName,
       description,
@@ -94,7 +85,6 @@ router.post("/create-product", async (req, res) => {
           "Product name, SKU, brand, category aur base price required hai",
       });
     }
-
     const [result] = await pool.execute(
       `
       INSERT INTO products (
@@ -146,7 +136,6 @@ router.post("/create-product", async (req, res) => {
         JSON.stringify(images || []),
       ]
     );
-
     res.json({
       success: true,
       message: "Product Created Successfully",
@@ -154,14 +143,12 @@ router.post("/create-product", async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-
     if (error.code === "ER_DUP_ENTRY") {
       return res.status(409).json({
         success: false,
         message: "This SKU already exists",
       });
     }
-
     res.status(500).json({
       success: false,
       message: "Product create nahi hua",
@@ -169,8 +156,6 @@ router.post("/create-product", async (req, res) => {
     });
   }
 });
-
-/* DELETE PRODUCT */
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;

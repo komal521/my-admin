@@ -16,12 +16,42 @@ import pencilIcon from "../assets/pencil (1).png";
 import binIcon from "../assets/bin (1).png";
 import addIcon from "../assets/add.png";
 import AddProduct from "./AddProduct";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 const ProductManagement = ({ darkMode }) => {
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    doc.text("Product Catalog Report", 14, 15);
+    const tableColumn = ["SKU ID", "Product Name", "Category", "Brand", "Price", "Stock", "Status"];
+    const tableRows = [];
+    visibleProducts.forEach(product => {
+      const rowData = [
+        product.sku || product.raw?.sku || "",
+        product.name || product.product_name || "",
+        product.category || "",
+        product.brand || "",
+        product.price || `₹${product.base_price}`,
+        product.stock || `${product.stock_quantity} Units`,
+        product.status || (product.is_active ? "Active" : "Draft")
+      ];
+      tableRows.push(rowData);
+    });
+
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+    });
+    doc.save(`Product_Report_${new Date().toLocaleDateString()}.pdf`);
+  };
+
   const [activePage, setActivePage] = useState(1);
   const [showAddProduct, setShowAddProduct] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [dbProducts, setDbProducts] = useState([]);
+  const [viewProduct, setViewProduct] = useState(null);
   const [cards, setCards] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const loadCards = async () => {
     try {
       const response = await fetch("http://localhost:5000/api/product/cards");
@@ -126,7 +156,6 @@ const ProductManagement = ({ darkMode }) => {
       if (!response.ok) {
         throw new Error("Products API failed");
       }
-
       const data = await response.json();
       const mappedProducts = (data.products || []).map((product) => ({
         raw: product,
@@ -142,19 +171,17 @@ const ProductManagement = ({ darkMode }) => {
           ? "bg-green-100 text-green-700"
           : "bg-gray-200 text-gray-600",
       }));
-
       setDbProducts(mappedProducts);
     } catch (error) {
       console.error(error);
     }
   };
-
   useEffect(() => {
     loadProducts();
     loadCards();
   }, []);
-
-  const visibleProducts = dbProducts.length > 0 ? dbProducts : products;
+  const baseProducts = dbProducts.length > 0 ? dbProducts : products;
+  const visibleProducts = baseProducts.filter(p => p.name?.toLowerCase().includes(searchQuery.toLowerCase()) || p.sku?.toLowerCase().includes(searchQuery.toLowerCase()));
   if (showAddProduct || editingProduct) {
     return (
       <AddProduct
@@ -165,17 +192,14 @@ const ProductManagement = ({ darkMode }) => {
           setShowAddProduct(false);
           setEditingProduct(null);
           loadProducts();
-        }}
-      />
+        }} />
     );
   }
 const handleDelete = async (id) => {
   const confirmDelete = window.confirm(
     "Are you sure you want to delete this product?"
   );
-
   if (!confirmDelete) return;
-
   try {
     const response = await fetch(
       `http://localhost:5000/api/products/${id}`,
@@ -187,7 +211,6 @@ const handleDelete = async (id) => {
     if (!response.ok) {
       throw new Error("Delete failed");
     }
-
     loadProducts();
     loadCards();
   } catch (error) {
@@ -210,11 +233,9 @@ const handleDelete = async (id) => {
         <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={() => setShowAddProduct(true)}
-            className="px-7 py-3 rounded-3xl bg-gradient-to-r from-[#d4af37] to-[#b8860b]
-  hover:opacity-90 text-white text-sm font-semibold shadow-lg
-  transition-all duration-300 hover:scale-[1.03]"
-          >
-            Insert
+            className="flex items-center gap-3 bg-[#6f4e37] text-white px-6 py-3 rounded-2xl shadow-lg hover:scale-105 transition-all duration-300" >
+            <img src={addIcon} alt="" className="w-4 h-4 brightness-0 invert" />
+            <span className="font-semibold text-sm">Insert</span>
           </button>
           <div className={`flex items-center gap-3 px-4 py-3 rounded-2xl border min-w-[240px]
             ${darkMode
@@ -222,49 +243,79 @@ const handleDelete = async (id) => {
               : "bg-white border-gray-200"}`} >
             <img src={searchIcon} alt="" className="w-4 h-4 opacity-70" />
             <input type="text" placeholder="Search products..."
+              value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
               className={`bg-transparent outline-none text-sm w-full
               ${darkMode
                   ? "text-white placeholder:text-gray-400"
                   : "text-gray-700 placeholder:text-gray-400"}`} />
           </div>
           <button
-            className={`flex items-center gap-2 px-5 py-3 rounded-2xl border text-sm font-medium transition-all duration-300 hover:scale-[1.03]
-            ${darkMode
-                ? "bg-[#1a2234] border-[#2b3548] text-white hover:bg-[#d4a373]"
-                : "bg-white border-gray-200 text-gray-700 hover:bg-[#d4a373] hover:text-white"}`} >
+            onClick={handleExportPDF}
+            className="flex items-center gap-3 bg-white px-5 py-3 rounded-2xl border border-gray-200 hover:shadow-lg transition-all duration-300" >
             <img src={uploadIcon} alt="" className="w-4 h-4" />
-            Import
+            <span className="font-medium text-yellow-900 text-sm">Export (PDF)</span>
           </button>
           <button
             onClick={() => setShowAddProduct(true)}
-            className="px-6 py-3 rounded-2xl bg-gradient-to-r from-[#d4af37] to-[#b8860b] hover:opacity-90 text-white text-sm font-semibold shadow-lg transition-all duration-300 hover:scale-[1.03]">
-            Add Product
+            className="flex items-center gap-3 bg-[#6f4e37] text-white px-6 py-3 rounded-2xl shadow-lg hover:scale-105 transition-all duration-300">
+            <img src={addIcon} alt="" className="w-4 h-4 brightness-0 invert" />
+            <span className="font-semibold text-sm">Add Product</span>
           </button>
         </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-7">
+      {viewProduct && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className={`w-full max-w-2xl rounded-3xl p-6 ${darkMode ? "bg-[#1e293b]" : "bg-white"} shadow-2xl relative`}>
+            <button 
+              onClick={() => setViewProduct(null)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-red-500 font-bold text-xl" >
+              x
+            </button>
+            <h2 className={`text-2xl font-bold mb-6 ${darkMode ? "text-white" : "text-black"}`}>Product Details</h2>
+            <div className="flex flex-col md:flex-row gap-6">
+              <img src={viewProduct.image} alt="" className="w-48 h-48 rounded-2xl object-cover" />
+              <div className={`space-y-3 flex-1 ${darkMode ? "text-gray-300" : "text-gray-700"}`}>
+                <p><strong>Name:</strong> {viewProduct.name}</p>
+                <p><strong>SKU:</strong> {viewProduct.sku}</p>
+                <p><strong>Category:</strong> {viewProduct.category}</p>
+                <p><strong>Brand:</strong> {viewProduct.brand}</p>
+                <p><strong>Price:</strong> {viewProduct.price}</p>
+                <p><strong>Stock:</strong> {viewProduct.stock}</p>
+                <p><strong>Status:</strong> {viewProduct.status}</p>
+              </div>
+            </div>
+            <div className="mt-8 text-right">
+              <button 
+                onClick={() => setViewProduct(null)}
+                className="px-6 py-2 rounded-xl bg-gray-200 text-gray-800 font-semibold hover:bg-gray-300">
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mt-10 mb-7">
         {cards.map((card, index) => (
           <div key={index}
-            className="bg-[#b98952] rounded-3xl p-6 shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300" >
-            <div className="flex items-start justify-between mb-8">
-              <div className="w-14 h-14 rounded-2xl bg-[#1d2433] flex items-center justify-center shadow-md">
-                <img src={card.icon} alt=""
-                  className="w-6 h-6 brightness-0 invert" />
+            className="relative overflow-hidden rounded-3xl p-6 shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 group cursor-pointer border border-white/20">
+            <div className="absolute inset-0 bg-[linear-gradient(135deg,#f3d3b5,#b78457,#6f4e37)]"></div>
+            <div className="absolute inset-0 bg-black/20"></div>
+            <div className="flex items-start justify-between relative z-10">
+              <div className="w-14 h-14 rounded-2xl bg-white/90 flex items-center justify-center shadow-lg">
+                <img src={card.icon} alt="" className="w-7 h-7" />
               </div>
-              <span className="text-sm font-semibold text-[#1f1f1f]">
+              <span className="text-xs font-semibold px-3 py-1 rounded-full bg-black/80 text-white">
                 {card.growth}
               </span>
             </div>
-            <h3 className="text-[#2f2f2f] text-base font-medium">
-              {card.title}
-            </h3>
-            <p className="text-4xl font-bold text-[#111] mt-2">
-              {card.value}
-            </p>
+            <div className="mt-8 relative z-10">
+              <p className="text-xs tracking-[2px] text-white/80 font-semibold uppercase">{card.title}</p>
+              <h2 className="text-3xl font-bold text-white mt-4 leading-none">{card.value}</h2>
+            </div>
           </div>
         ))}
       </div>
-      <div className="grid grid-cols-1 2xl:grid-cols-[1fr_320px] gap-6">
+      <div className="grid grid-cols-1 gap-6">
         <div className="space-y-6">
           <div className={`rounded-3xl overflow-hidden border
             ${darkMode
@@ -367,7 +418,7 @@ const handleDelete = async (id) => {
                       </td>
                       <td className="px-4 py-5">
                         <div className="flex items-center gap-4">
-                          <button className="hover:scale-110 transition-all">
+                          <button className="hover:scale-110 transition-all" onClick={() => setViewProduct(product)}>
                             <img src={showIcon} alt="" className="w-4 h-4 opacity-70" />
                           </button>
                           <button className="hover:scale-110 transition-all" onClick={() => { if (product.raw) setEditingProduct(product.raw); else alert('Static products cannot be edited'); }}>
@@ -400,7 +451,7 @@ const handleDelete = async (id) => {
                     onClick={() => setActivePage(page)}
                     className={`w-9 h-9 rounded-full text-sm font-medium transition-all
                     ${activePage === page
-                        ? "bg-[#d4af37] text-white"
+                        ? "bg-[#6f4e37] text-white"
                         : "bg-white border border-gray-200 text-gray-600 hover:bg-[#f5ecd2]"
                       }`} >
                     {page}
@@ -413,226 +464,90 @@ const handleDelete = async (id) => {
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            <div className="bg-[#E7C45A] rounded-[16px] px-5 py-4 shadow-sm relative overflow-hidden h-[95px]">
+            <div className="bg-[#6f4e37] rounded-[16px] px-5 py-4 shadow-sm relative overflow-hidden h-[95px]">
               <div className="flex items-start gap-3">
                 <div className="w-9 h-9 rounded-full bg-[#b8860b33] flex items-center justify-center">
                   <img src={boxIcon} alt="" className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="text-[14px] font-semibold text-[#3b2a08]">
+                  <h3 className="text-[14px] font-semibold text-black">
                     Warehouse A
                   </h3>
-                  <p className="text-[11px] text-[#6b5a2b] mt-[1px]">
+                  <p className="text-[11px] text-white mt-[1px]">
                     Main Distribution
                   </p>
                 </div>
               </div>
               <div className="absolute bottom-4 left-5 right-5">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-[11px] text-[#5c4b1f] font-medium">
+                  <span className="text-[11px] text-white font-medium">
                     Storage Capacity
                   </span>
-                  <span className="text-[11px] text-[#5c4b1f] font-semibold">
+                  <span className="text-[11px] text-black font-semibold">
                     84%
                   </span>
                 </div>
                 <div className="w-full h-[4px] bg-[#e6d3a1] rounded-full overflow-hidden">
-                  <div className="w-[84%] h-full bg-[#8A2BE2] rounded-full"></div>
+                  <div className="w-[84%] h-full bg-black rounded-full"></div>
                 </div>
               </div>
             </div>
-            <div className="bg-[#E7C45A] rounded-[16px] px-5 py-4 shadow-sm relative overflow-hidden h-[95px]">
+            <div className="bg-[#6f4e37] rounded-[16px] px-5 py-4 shadow-sm relative overflow-hidden h-[95px]">
               <div className="flex items-start gap-3">
                 <div className="w-9 h-9 rounded-full bg-[#b8860b33] flex items-center justify-center">
                   <img src={boxIcon} alt="" className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="text-[14px] font-semibold text-[#3b2a08]">
+                  <h3 className="text-[14px] font-semibold text-black">
                     Warehouse B
                   </h3>
-                  <p className="text-[11px] text-[#6b5a2b] mt-[1px]">
+                  <p className="text-[11px] text-white mt-[1px]">
                     Seasonal Overflow
                   </p>
                 </div>
               </div>
               <div className="absolute bottom-4 left-5 right-5">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-[11px] text-[#5c4b1f] font-medium">
+                  <span className="text-[11px] text-white font-medium">
                     Storage Capacity
                   </span>
-                  <span className="text-[11px] text-[#5c4b1f] font-semibold">
+                  <span className="text-[11px] text-black font-semibold">
                     72%
                   </span>
                 </div>
                 <div className="w-full h-[4px] bg-[#e6d3a1] rounded-full overflow-hidden">
-                  <div className="w-[72%] h-full bg-[#8A2BE2] rounded-full"></div>
+                  <div className="w-[72%] h-full bg-black rounded-full"></div>
                 </div>
               </div>
             </div>
-            <div className="bg-[#E7C45A] rounded-[16px] px-5 py-4 shadow-sm relative overflow-hidden h-[95px]">
+            <div className="bg-[#6f4e37] rounded-[16px] px-5 py-4 shadow-sm relative overflow-hidden h-[95px]">
               <div className="flex items-start gap-3">
                 <div className="w-9 h-9 rounded-full bg-[#b8860b33] flex items-center justify-center">
                   <img src={clockIcon} alt="" className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="text-[14px] font-semibold text-[#3b2a08]">
+                  <h3 className="text-[14px] font-semibold text-black">
                     Processing
                   </h3>
-                  <p className="text-[11px] text-[#6b5a2b] mt-[1px]">
+                  <p className="text-[11px] text-white mt-[1px]">
                     Inbound Shipments
                   </p>
                 </div>
               </div>
               <div className="absolute bottom-4 left-5 right-5">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-[11px] text-[#5c4b1f] font-medium">
+                  <span className="text-[11px] text-white font-medium">
                     Target ETA
                   </span>
-                  <span className="text-[11px] text-[#5c4b1f] font-semibold">
+                  <span className="text-[11px] text-black font-semibold">
                     12h 40m
                   </span>
                 </div>
                 <div className="w-full h-[4px] bg-[#e6d3a1] rounded-full overflow-hidden">
-                  <div className="w-[78%] h-full bg-[#8A2BE2] rounded-full"></div>
+                  <div className="w-[78%] h-full bg-black rounded-full"></div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-        <div className="space-y-5">
-          <div className="bg-white rounded-[28px] p-5 shadow-sm border border-[#ececec]">
-            <div className="flex items-center justify-between mb-5">
-              <h2 className="text-sm font-bold text-[#2b2b2b] uppercase tracking-wide">
-                Recent Additions
-              </h2>
-              <button className="text-[#7b61ff] text-xs font-semibold hover:underline">
-                View All
-              </button>
-            </div>
-            {[
-              {
-                name: "Velvet Sofa Cover",
-                price: "₹24.00",
-                time: "2 min ago",
-              },
-              {
-                name: "Titanium Wallet",
-                price: "₹85.00",
-                time: "45 mins ago",
-              },
-              {
-                name: "Bamboo Desk Lamp",
-                price: "₹62.00",
-                time: "7 hours ago",
-              },
-            ].map((item, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between py-3 border-b last:border-none" >
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-[#f4efff] flex items-center justify-center">
-                    <img src={addIcon} alt="" className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-semibold text-[#2f2f2f]">
-                      {item.name}
-                    </h3>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-[12px] font-bold text-[#ff7a00]">
-                        {item.price}
-                      </span>
-                      <span className="text-[11px] text-gray-400">
-                        • {item.time}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="bg-white rounded-[28px] p-5 shadow-sm border border-[#ececec]">
-            <h2 className="text-sm font-bold text-[#2b2b2b] uppercase tracking-wide mb-5">
-              TOP CATEGORIES
-            </h2>
-            <div className="grid grid-cols-2 gap-3">
-              {["Electronics", "Apparel", "Home", "Health"].map(
-                (item, index) => (
-                  <div
-                    key={index}
-                    className="bg-[#f4f5f8] rounded-2xl p-4 flex flex-col items-center justify-center text-center hover:shadow-md transition-all duration-300" >
-                    <div className="w-10 h-10 rounded-full bg-[#1f2430] flex items-center justify-center mb-3">
-                      <img src={boxIcon} alt="" className="w-4 h-4 brightness-0 invert" />
-                    </div>
-                    <h3 className="text-sm font-semibold text-[#2f2f2f]">
-                      {item}
-                    </h3>
-                    <p className="text-[11px] text-gray-400 mt-1">
-                      142 Items
-                    </p>
-                  </div>
-                )
-              )}
-            </div>
-          </div>
-          <div className="bg-white rounded-[28px] p-5 shadow-sm border border-[#ececec]">
-            <h2 className="text-sm font-bold text-[#2b2b2b] mb-5">
-              Top Performance
-            </h2>
-            {[
-              {
-                name: "Leather Satchel",
-                sold: "1204 Units Sold",
-                price: "₹45,750",
-                rank: "#1",
-              },
-
-              {
-                name: "Silk Sleep Mask",
-                sold: "840 Units Sold",
-                price: "₹12,400",
-                rank: "#2",
-              },
-
-              {
-                name: "Copper Pan Set",
-                sold: "745 Units Sold",
-                price: "₹89,400",
-                rank: "#3",
-              },
-            ].map((item, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between py-3 border-b last:border-none" >
-                <div>
-                  <h3 className="text-sm font-semibold text-[#2b2b2b]">
-                    {item.name}
-                  </h3>
-                  <p className="text-[11px] text-gray-400 mt-1">
-                    {item.sold}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-[11px] text-[#7b61ff] font-bold">
-                    {item.rank}
-                  </p>
-                  <p className="text-sm font-bold text-[#7b61ff] mt-1">
-                    {item.price}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="bg-gradient-to-b from-[#f0c54d] to-[#ff8c3a] rounded-[28px] p-5 shadow-md">
-            <h2 className="text-lg font-bold text-[#3d2d00]">
-              Premium Export
-            </h2>
-            <p className="text-[12px] text-[#5e4700] leading-6 mt-2">
-              Upgrade your plan to unlock automated PDF reporting and
-              inventory forecasting.
-            </p>
-            <button className="mt-5 w-full bg-[#1f2430] hover:bg-black transition-all text-white py-3 rounded-2xl text-sm font-semibold">
-              Unlock Now
-            </button>
           </div>
         </div>
       </div>

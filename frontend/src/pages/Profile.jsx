@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import profileImg from "../assets/b3.jpeg";
 import gmailIcon from "../assets/gmail.png";
 import phoneIcon from "../assets/telephone.png";
@@ -12,24 +12,38 @@ import mobileIcon from "../assets/smartphone-call.png";
 import clockIcon from "../assets/clock.png";
 import rightArrow from "../assets/right-arrow.png";
 import verifiedIcon from "../assets/verified.png";
+import showIcon from "../assets/show.png";
 const Profile = ({ darkMode }) => {
+  const [adminUser, setAdminUser] = useState(null);
+  useEffect(() => {
+    fetch("http://localhost:5000/api/users")
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.users.length > 0) {
+          setAdminUser(data.users[0]);
+        }
+      })
+      .catch(err => console.log(err));
+  }, []);
+  const name = adminUser ? adminUser.fullName : "Cassandra Elara Vane";
+  const email = adminUser ? adminUser.email : "cassandra.vane@astrozura.com";
+  const phone = adminUser ? adminUser.phone : "+1 (555) 782-9012";
+  const dob = adminUser ? new Date(adminUser.dob).toLocaleDateString() : "May 24, 1988";
+  const gender = adminUser ? adminUser.gender : "Female";
+  const image = adminUser && adminUser.profileImage ? `http://localhost:5000/uploads/${adminUser.profileImage}` : profileImg;
   return (
     <div
       className={`p-3 sm:p-4 md:p-6 lg:p-8 min-h-screen
       ${darkMode ? "bg-[#0f0f0f]" : "bg-[#f7f5f2]"}`} >
-      <div className="bg-gradient-to-r from-[#875bc0] to-[#897c99] rounded-[30px] p-5 md:p-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 shadow-sm">
+      <div className="bg-[linear-gradient(135deg,#f3d3b5,#b78457,#6f4e37)] rounded-[30px] p-5 md:p-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center gap-5">
-          <img
-            src={profileImg}
-            alt=""
-            className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg"
-          />
+          <img src={image} alt=""
+            className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg" />
           <div>
             <div className="flex items-center gap-3 flex-wrap">
               <h1 className="text-2xl md:text-3xl font-bold text-[#1d1d1d]">
-              Ramgarhia
+              {name}
               </h1>
-
               <span className="px-3 py-1 rounded-full text-xs font-semibold bg-white text-gray-700">
                 Administrator
               </span>
@@ -37,11 +51,11 @@ const Profile = ({ darkMode }) => {
             <div className="flex flex-wrap gap-5 mt-4 text-sm text-gray-700">
               <div className="flex items-center gap-2">
                 <img src={gmailIcon} alt="" className="w-4 h-4" />
-                <span>cassandra.vane@astrozura.com</span>
+                <span>{email}</span>
               </div>
               <div className="flex items-center gap-2">
                 <img src={phoneIcon} alt="" className="w-4 h-4" />
-                <span>+1 (555) 782-9012</span>
+                <span>{phone}</span>
               </div>
               <div className="flex items-center gap-2">
                 <img src={locationIcon} alt="" className="w-4 h-4" />
@@ -50,9 +64,9 @@ const Profile = ({ darkMode }) => {
             </div>
           </div>
         </div>
-        <button className="flex items-center justify-center gap-2 bg-white px-5 py-3 rounded-2xl shadow-sm text-sm font-semibold hover:scale-[1.02] transition-all">
-          <img src={pencilIcon} alt="" className="w-4 h-4" />
-          Edit Profile
+        <button className="flex items-center justify-center gap-3 bg-[#6f4e37] text-white px-6 py-3 rounded-2xl shadow-lg hover:scale-105 transition-all duration-300">
+          <img src={pencilIcon} alt="" className="w-4 h-4 brightness-0 invert" />
+          <span className="font-semibold text-sm">Edit Profile</span>
         </button>
       </div>
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-7">
@@ -80,7 +94,7 @@ const Profile = ({ darkMode }) => {
                     Full Name
                   </p>
                   <h3 className="font-semibold mt-1">
-                    Cassandra Elara Vane
+                    {name}
                   </h3>
                 </div>
               </div>
@@ -91,7 +105,7 @@ const Profile = ({ darkMode }) => {
                     Email Address
                   </p>
                   <h3 className="font-semibold mt-1">
-                    cassandra.v@astrozura.com
+                    {email}
                   </h3>
                 </div>
               </div>
@@ -102,7 +116,7 @@ const Profile = ({ darkMode }) => {
                     Phone Number
                   </p>
                   <h3 className="font-semibold mt-1">
-                    +1 555 782-9012
+                    {phone}
                   </h3>
                 </div>
               </div>
@@ -113,7 +127,7 @@ const Profile = ({ darkMode }) => {
                     Date Of Birth
                   </p>
                   <h3 className="font-semibold mt-1">
-                    May 24, 1988
+                    {dob}
                   </h3>
                 </div>
               </div>
@@ -124,7 +138,7 @@ const Profile = ({ darkMode }) => {
                     Gender
                   </p>
                   <h3 className="font-semibold mt-1">
-                    Female
+                    {gender}
                   </h3>
                 </div>
               </div>
@@ -175,46 +189,41 @@ const Profile = ({ darkMode }) => {
                   </p>
                 </div>
               </div>
-              <div className="w-12 h-6 bg-violet-600 rounded-full flex items-center justify-end px-1">
+              <div className="w-12 h-6 bg-[#6f4e37] rounded-full flex items-center justify-end px-1">
                 <div className="w-4 h-4 bg-white rounded-full"></div>
               </div>
             </div>
             <div className="p-5 flex items-center justify-between border-b border-[#ececec]">
               <div className="flex items-center gap-3">
                 <img src={mobileIcon} alt="" className="w-5 h-5" />
-
                 <div>
                   <h3 className="font-semibold">
                     Login Activity Notifications
                   </h3>
-
                   <p className="text-sm text-gray-500">
                     Receive alerts for account logins
                   </p>
                 </div>
               </div>
-
-              <div className="w-12 h-6 bg-violet-600 rounded-full flex items-center justify-end px-1">
+              <div className="w-12 h-6 bg-[#6f4e37] rounded-full flex items-center justify-end px-1">
                 <div className="w-4 h-4 bg-white rounded-full"></div>
               </div>
             </div>
             <div className="p-5 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <img src={clockIcon} alt="" className="w-5 h-5" />
-
                 <div>
                   <h3 className="font-semibold">
                     Session History
                   </h3>
-
                   <p className="text-sm text-gray-500">
                     Currently active sessions on devices
                   </p>
                 </div>
               </div>
-
-              <button className="bg-black text-white px-4 py-2 rounded-xl text-sm">
-                Review All
+              <button className="flex items-center justify-center gap-3 bg-[#6f4e37] text-white px-4 py-2 rounded-xl shadow-md hover:scale-105 transition-all duration-300">
+                <img src={showIcon} alt="" className="w-3.5 h-3.5 brightness-0 invert" />
+                <span className="font-semibold text-xs">Review All</span>
               </button>
             </div>
             <div className="px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between
@@ -223,7 +232,7 @@ const Profile = ({ darkMode }) => {
     <div className="w-8 h-8 rounded-full bg-[#fff2b8] flex items-center justify-center">
       <img src={verifiedIcon} alt="" className="w-4 h-4"/>
     </div>
-    <h3  className="text-[#e3b129]  text-sm sm:text-base  font-bold tracking-wide" >
+    <h3  className="text-black  text-sm sm:text-base  font-bold tracking-wide" >
       ACCOUNT SECURITY SCORE: 98% (EXCELLENT)
     </h3>
   </div>
@@ -236,20 +245,16 @@ const Profile = ({ darkMode }) => {
         <div className="bg-[#fff1c9] rounded-[28px] p-6 h-fit">
           <div className="flex items-center gap-3 mb-6">
             <img src={clockIcon} alt="" className="w-5 h-5" />
-
             <div>
               <h2 className="text-xl font-bold">
                 Activity Timeline
               </h2>
-
               <p className="text-sm text-gray-600">
                 Recent events and security logs
               </p>
             </div>
           </div>
-
           <div className="space-y-6">
-
             {[
               "Profile avatar updated",
               "Logged in via Chrome",
@@ -260,34 +265,22 @@ const Profile = ({ darkMode }) => {
               "Admin permissions reviewed",
             ].map((item, index) => (
               <div key={index} className="flex gap-3">
-
-                <img
-                  src={clockIcon}
-                  alt=""
-                  className="w-5 h-5 mt-1"
-                />
-
+                <img src={clockIcon} alt="" className="w-5 h-5 mt-1" />
                 <div>
                   <h3 className="font-medium text-sm">
                     {item}
                   </h3>
-
                   <p className="text-xs text-gray-500 mt-1">
                     Just now
                   </p>
                 </div>
-
               </div>
             ))}
-
           </div>
-
-          <button className="mt-8 flex items-center gap-2 text-sm font-semibold text-[#6b4eff]">
-            View Complete Activity Log
-
-            <img src={rightArrow} alt="" className="w-4 h-4" />
+          <button className="mt-8 flex items-center justify-center gap-3 bg-[#6f4e37] text-white px-6 py-3 rounded-2xl shadow-lg hover:scale-105 transition-all duration-300 mx-auto">
+            <img src={showIcon} alt="" className="w-4 h-4 brightness-0 invert" />
+            <span className="font-semibold text-sm">View Complete Activity Log</span>
           </button>
-
         </div>
       </div>
     </div>

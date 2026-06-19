@@ -167,34 +167,17 @@ const AddProduct = ({ darkMode, onBack, product }) => {
             </div>
             <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
               <TextInput  label="SKU / Product ID"  name="sku" icon={boxIcon}  placeholder="AUR-2024-MS-001" defaultValue={product?.sku} />
-              <TextInput
-                label="Brand Name"
-                name="brand"
-                icon={cateIcon}
-                placeholder="e.g. Aurelian Luxe"
-                defaultValue={product?.brand}
-              />
+              <TextInput label="Brand Name"  name="brand" icon={cateIcon} placeholder="e.g. Aurelian Luxe"
+                defaultValue={product?.brand} />
             </div>
-
             <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-              <SelectInput
-                label="Category"
-                name="category"
-                icon={cateIcon}
-                placeholder="Select Category"
+              <SelectInput  label="Category" name="category" icon={cateIcon} placeholder="Select Category"
                 options={["Electronics", "Accessories", "Fashion", "Home"]}
-                defaultValue={product?.category}
-              />
-              <SelectInput
-                label="Sub-Category"
-                name="subCategory"
-                icon={cateIcon}
-                placeholder="Select Sub-Category"
-                options={["Luxury", "Premium", "Classic", "New Arrival"]}
-                defaultValue={product?.sub_category}
-              />
+                defaultValue={product?.category} />
+              <SelectInput label="Sub-Category" name="subCategory" icon={cateIcon}
+                placeholder="Select Sub-Category"  options={["Luxury", "Premium", "Classic", "New Arrival"]}
+                defaultValue={product?.sub_category} />
             </div>
-
             <div className="pt-2">
               <SectionHeader icon={camraIcon} title="Media & Gallery" />
               <label className={`mb-2 block text-sm font-semibold ${labelClass}`}>
@@ -205,8 +188,7 @@ const AddProduct = ({ darkMode, onBack, product }) => {
                   darkMode
                     ? "border-[#2b3548] bg-[#1a2234] hover:border-[#d4af37]"
                     : "border-gray-200 bg-[#fcfcfc] hover:border-[#d4af37]"
-                }`}
-              >
+                }`} >
                 <input type="file" accept="image/*" onChange={(e) => setImage(e.target.files[0])} className="hidden" />
                 <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#fff7db]">
                   <img src={camraIcon} alt="" className="h-7 w-7" />
@@ -221,22 +203,16 @@ const AddProduct = ({ darkMode, onBack, product }) => {
                   Choose Files
                 </span>
               </label>
-
               <div className="mt-5 flex flex-wrap items-center gap-4">
                 {[a3, a2].map((image, index) => (
-                  <img
-                    key={image}
-                    src={image}
-                    alt={`Product preview ${index + 1}`}
-                    className="h-20 w-20 rounded-2xl border border-gray-200 object-cover"
-                  />
+                  <img key={image} src={image} alt={`Product preview ${index + 1}`}
+                    className="h-20 w-20 rounded-2xl border border-gray-200 object-cover"/>
                 ))}
                 <button className="flex h-20 w-20 items-center justify-center rounded-2xl border border-dashed border-gray-300 bg-white">
                   <img src={addIcon} alt="" className="h-6 w-6" />
                 </button>
               </div>
             </div>
-
             <div className="pt-2">
               <SectionHeader icon={cateIcon} title="Pricing & Inventory" />
               <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
@@ -244,7 +220,6 @@ const AddProduct = ({ darkMode, onBack, product }) => {
                 <TextInput label="Discount Price (₹)" name="discountPrice" icon={linkIcon} placeholder="0.00" defaultValue={product?.discount_price} />
                 <TextInput label="Stock Quantity" name="stockQuantity" icon={cateIcon} placeholder="0" defaultValue={product?.stock_quantity} />
               </div>
-
               <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center">
                 <button
                   type="button"
@@ -253,18 +228,15 @@ const AddProduct = ({ darkMode, onBack, product }) => {
                     isActive
                       ? "border-[#e0b23d] bg-[#fff8df] text-[#14356f]"
                       : "border-gray-200 bg-gray-100 text-gray-500"
-                  }`}
-                >
+                  }`} >
                   <span
                     className={`flex h-6 w-11 items-center rounded-full p-1 transition-all ${
                       isActive ? "bg-[#d9a63d]" : "bg-gray-300"
-                    }`}
-                  >
+                    }`} >
                     <span
                       className={`h-4 w-4 rounded-full bg-white shadow transition-all ${
                         isActive ? "translate-x-5" : "translate-x-0"
-                      }`}
-                    />
+                      }`} />
                   </span>
                   Product is Active
                 </button>
@@ -274,7 +246,6 @@ const AddProduct = ({ darkMode, onBack, product }) => {
                 </label>
               </div>
             </div>
-
             <div className="pt-2">
               <SectionHeader icon={carIcon} title="Shipping & Specifications" />
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
@@ -283,46 +254,31 @@ const AddProduct = ({ darkMode, onBack, product }) => {
                 <TextInput label="Width (cm)" name="width" icon={scanningIcon} placeholder="0.0" defaultValue={product?.width} />
                 <TextInput label="Height (cm)" name="height" icon={scanningIcon} placeholder="0.0" defaultValue={product?.height} />
               </div>
-
               <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
-                <SelectInput
-                  label="Base Color"
-                  name="baseColor"
-                  icon={artIcon}
-                  placeholder="Select primary aesthetic color"
-                  options={["Gold", "Platinum", "Black", "Silver"]}
-                  defaultValue={product?.base_color}
-                />
+                <SelectInput label="Base Color" name="baseColor" icon={artIcon}
+                  placeholder="Select primary aesthetic color" options={["Gold", "Platinum", "Black", "Silver"]}
+                  defaultValue={product?.base_color} />
                 <div>
                   <label className={`mb-2 block text-sm font-semibold ${labelClass}`}>
                     Product Tags
                   </label>
                   <div className={`flex min-h-12 flex-wrap items-center gap-2 rounded-2xl border px-3 py-2 ${fieldClass}`}>
                     {["Luxury", "Limited Edition", "New Arrival"].map((tag) => (
-                      <span
-                        key={tag}
-                        className="flex items-center gap-2 rounded-full bg-[#eef2ff] px-3 py-1 text-xs font-semibold text-[#23417d]"
-                      >
+                      <span key={tag}
+                        className="flex items-center gap-2 rounded-full bg-[#eef2ff] px-3 py-1 text-xs font-semibold text-[#23417d]" >
                         {tag}
                         <img src={closeIcon} alt="" className="h-3 w-3" />
                       </span>
                     ))}
-                    <input
-                      type="text"
-                      placeholder="Add..."
-                      className="min-w-[80px] flex-1 bg-transparent text-sm outline-none"
-                    />
+                    <input type="text" placeholder="Add..."
+                      className="min-w-[80px] flex-1 bg-transparent text-sm outline-none"/>
                   </div>
                 </div>
               </div>
             </div>
-
             <div className={`rounded-[24px] border p-4 sm:p-5 ${darkMode ? "border-[#2b3548]" : "border-[#f0dfbd]"}`}>
-              <SectionHeader
-                icon={menuIcon}
-                title="Product Variants"
-                desc="Add multiple sizes, materials, or color options for this product."
-              />
+              <SectionHeader icon={menuIcon} title="Product Variants"
+                desc="Add multiple sizes, materials, or color options for this product." />
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[720px] overflow-hidden rounded-2xl text-sm">
                   <thead className="bg-[#faf7ef] text-left text-xs font-bold uppercase text-[#23417d]">
@@ -372,5 +328,4 @@ const AddProduct = ({ darkMode, onBack, product }) => {
     </div>
   );
 };
-
 export default AddProduct;
